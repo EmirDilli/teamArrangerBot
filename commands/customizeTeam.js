@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js");
 const discord = require("discord.js");
+const colors = require("../constants/colors");
 
 module.exports = {
     command: new SlashCommandBuilder()
@@ -9,44 +10,22 @@ module.exports = {
             .setName("customize_team_name")
             .setDescription("Customize your team's name")
         )
-        .addStringOption(option => option
-            .setName("customize_team_color")
-            .setDescription("Customize your team's color")
-            .setChoices(
-                {
-                    name: 'Aqua',
-                    value: 'Aqua'
-                },
-                {
-                    name: 'Green',
-                    value: 'Green'
-                },
-                {
-                    name: 'Orange',
-                    value: 'Orange'
-                },
-                {
-                    name: 'Purple',
-                    value: 'Purple'
-                },
-                {
-                    name: 'Gold',
-                    value: 'Gold'
-                },
-                {
-                    name: 'Blurple',
-                    value: 'Blurple'
-                },
-                {
-                    name: 'Random',
-                    value: 'Random'
-                },
-            )
-        )
+        .addStringOption(option => {
+            option
+                .setName("customize_team_color")
+                .setDescription("Customize your team's color");
+
+            colors.forEach(color => {
+                option.addChoices(color);
+            });
+
+            return option;
+
+        })
         .addAttachmentOption(option => option
             .setName("customize_team_logo")
-            .setDescription("Customize your team's logo!")    
+            .setDescription("Customize your team's logo!")
         )
-        
-    
+
+
 }
