@@ -2,7 +2,7 @@ const discord = require("discord.js");
 const {MongoClient} = require("mongodb")
 const updateData = require("../../databaseFeatures/dbUpdateUser")
 const readData = require("../../databaseFeatures/dbReadData")
-const {addXP} = require("../../features/changeXP")
+
 
 // Client messageCreate event
 
