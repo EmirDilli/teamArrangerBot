@@ -7,7 +7,7 @@ module.exports = {
         .setDescription("As the admin, you can kick one of your team members!")
         .addUserOption((option) => option
             .setName("kick_member")
-            .setDescription("choose the member to invite")
+            .setDescription("choose the member to kick")
             .setRequired(true)
         )
     
