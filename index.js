@@ -6,7 +6,7 @@ const { IntentsBitField } = discord;
 const eventHandler = require("./events/eventHandler.js");
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord.js");
-const commandHandler = require('./commands/commandHandler').handler()
+const commands = require('./commands/commandHandler').handler();
 const databaseConnect = require("./databaseFeatures/dbConnect.js");
 const { mongo } = require("mongoose");
 
@@ -58,7 +58,7 @@ async function main() {
         const rest = new REST({ version: '10' }).setToken(TOKEN);
         
         await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {
-            body: commandHandler
+            body: commands
         });
         
 
