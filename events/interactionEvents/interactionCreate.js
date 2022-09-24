@@ -1,7 +1,7 @@
 const discord = require("discord.js");
 const {MongoClient} = require("mongodb")
 const {EmbedBuilder , ActionRowBuilder , ButtonBuilder , ButtonStyle} = discord;
-const {script} = require("../../commands/inviteMember.js");
+const {script} = require("../../commands/chat_input_command/inviteMember");
 
 
 // Client interactionCreate event

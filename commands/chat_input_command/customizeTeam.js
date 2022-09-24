@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js");
 const discord = require("discord.js");
-const colors = require("../constants/colors");
+const colors = require("../../constants/colors");
 
 module.exports = {
     command: new SlashCommandBuilder()
