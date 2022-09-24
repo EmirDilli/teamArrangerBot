@@ -16,7 +16,7 @@ module.exports = {
      * @param {CommandInteraction} interaction 
      */
 
-    async script(interaction) {
+    async invite_member(interaction , mongoClient) {
 
         const invited_user = interaction.options.get("invite_member").user;
 

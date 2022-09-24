@@ -3,7 +3,7 @@ const { MongoClient } = require("mongodb");
 require("dotenv").config();
 
 //gives the connection path
-const path = `mongodb+srv://${process.env.DATABASE_USERNAME}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE_NAME}.j1ok1i1.mongodb.net/?retryWrites=true&w=majority`;
+const path = `mongodb+srv://${process.env.DATABASE_USERNAME}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE_NAME}.mongodb.net/?retryWrites=true&w=majority`;
 
 module.exports = async () => {
 
@@ -22,17 +22,35 @@ module.exports = async () => {
                 type: String,
                 required: true
             },
+            
             userName: {
                 type: String,
                 required: true
             },
-            XP: {
-                type: Number,
+
+            teamName: {
+                type: String,
                 required: true
             },
-            Level: {
-                type: Number,
+
+            isAdmin: {
+                type: Boolean,
                 required: true
+            },
+
+            teamColor: {
+                type: String,
+                required: false
+            },
+
+            teamLogo: {
+                type: String,
+                required: false
+            },
+
+            teamDescription: {
+                type: String,
+                required: false
             }
         });
 

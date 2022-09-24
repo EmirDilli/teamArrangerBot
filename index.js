@@ -44,10 +44,10 @@ async function main() {
         console.log('/ Command activations');
 
         // connects the database to the application
-       /*  await databaseConnect().then((client) => {
+        await databaseConnect().then((client) => {
             mongoClient = client;
         });
- */
+ 
         // handles all the event files before running
         eventHandler.handler(client, mongoClient);
 
