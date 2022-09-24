@@ -1,6 +1,7 @@
 const discord = require("discord.js");
 const {MongoClient} = require("mongodb")
 const {EmbedBuilder , ActionRowBuilder , ButtonBuilder , ButtonStyle} = discord;
+const {script} = require("../../commands/inviteMember.js");
 
 
 // Client interactionCreate event
@@ -19,7 +20,14 @@ module.exports = {
 
         client.on("interactionCreate", async (interaction) => {
 
+            if(interaction.isCommand()){
+                script(interaction);
+            }
+
+            //  button interactions
             if(interaction.isButton()){
+
+                // team apply button is pressed
                 if(interaction.customId === "teamApply"){
 
                     const embed = new EmbedBuilder()
