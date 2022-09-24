@@ -1,7 +1,8 @@
 const discord = require("discord.js");
 const {MongoClient} = require("mongodb")
 const {EmbedBuilder , ActionRowBuilder , ButtonBuilder , ButtonStyle} = discord;
-const {invite_member} = require("../../commands/inviteMember.js");
+const {invite_member} = require("../../commands/chat_input_command/inviteMember.js");
+const {script} = require("../../commands/chat_input_command/createTeam.js");
 
 
 // Client interactionCreate event
@@ -17,13 +18,15 @@ module.exports = {
     async event(client, mongoClient){
         
     // collects every slash command script into an object
-
-        client.on("interactionCreate", async (interaction , mongoClient) => {
+        client.on("interactionCreate", async (interaction) => {
 
             if(interaction.isCommand()){
                 
                 if(interaction.commandName === "invite_member"){
                     invite_member(interaction, mongoClient);
+                }
+                if(interaction.commandName === "create_team"){
+                    script(interaction, mongoClient , client);
                 }
 
             }

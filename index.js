@@ -47,7 +47,7 @@ async function main() {
         await databaseConnect().then((client) => {
             mongoClient = client;
         });
- 
+
         // handles all the event files before running
         eventHandler.handler(client, mongoClient);
 
