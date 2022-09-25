@@ -51,6 +51,11 @@ module.exports = async () => {
             teamDescription: {
                 type: String,
                 required: false
+            },
+
+            teamEmbedID: {
+                type: String,
+                required: true
             }
         });
 

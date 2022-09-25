@@ -27,12 +27,12 @@ module.exports = {
 
             return option;
 
-        }
-        )
-        .addAttachmentOption(option =>
+        })
+        .addStringOption(option =>
             option
-                .setName("logo")
-                .setDescription("choose your logo from your local machine")
+                .setName("team_description")
+                .setDescription("Select your team's description.")
+                .setRequired(false)
         )
         .addStringOption(option =>
             option
@@ -73,20 +73,12 @@ module.exports = {
             return;
         }
 
+        //
         const teamColor = interaction.options.get("team_color") ? interaction.options.get("team_color").value : null;
         const teamLogo = interaction.options.get("logo_url") ? interaction.options.get("logo_url").value : null;
+        const teamDescription = interaction.options.get("team_description") ? interaction.options.get("team_description").value : null;
 
-        const dbUser = {
-            "userID": interaction.user.id,
-            "userName": interaction.member.nickname,
-            "teamName": teamName,
-            "isAdmin": true,
-            "teamColor": (teamColor),
-            "teamLogo": (teamLogo)
-        }
-
-        await addData(mongoClient,dbUser);
-
+        //  constructing embed message of the created team
         const embed = new EmbedBuilder()
             .setAuthor({ "name": teamName })
             .addFields({
@@ -96,20 +88,43 @@ module.exports = {
             });
 
         if (teamColor) embed.setColor(teamColor);
-        if (teamLogo) embed.setThumbnail(teamLogo);
+
+        // have to check if the url is valid
+        if (teamLogo){
+            try {
+                embed.setThumbnail(teamLogo);
+            } catch (error) {
+                teamLogo = null;
+            }
+        } 
+        if (teamDescription) embed.setDescription(teamDescription);
 
         const row = new ActionRowBuilder()
             .addComponents(
                 new ButtonBuilder()
-                    .setCustomId("teamApply")
+                    .setCustomId(`teamApply.${interaction.user.id}`)
                     .setLabel("Apply")
                     .setStyle(ButtonStyle.Success)
             );
 
-        client.channels.cache.get("1022518275491500163").send({
+        const msg = await client.channels.cache.get("1022518275491500163").send({
             embeds: [embed],
             components: [row]
         });
+
+        //  adding the user data into database
+        const dbUser = {
+            "userID": interaction.user.id,
+            "userName": interaction.member.nickname,
+            "teamName": teamName,
+            "isAdmin": true,
+            "teamColor": (teamColor),
+            "teamLogo": (teamLogo),
+            "teamDescription": (teamDescription),
+            "teamEmbedID": (msg.id)
+        }
+
+        await addData(mongoClient,dbUser);
 
         interaction.reply({
             content: "Your team has been succesfully created!",
