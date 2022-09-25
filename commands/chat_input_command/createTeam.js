@@ -73,7 +73,6 @@ module.exports = {
             return;
         }
 
-        //
         const teamColor = interaction.options.get("team_color") ? interaction.options.get("team_color").value : null;
         const teamLogo = interaction.options.get("logo_url") ? interaction.options.get("logo_url").value : null;
         const teamDescription = interaction.options.get("team_description") ? interaction.options.get("team_description").value : null;
@@ -115,7 +114,7 @@ module.exports = {
         //  adding the user data into database
         const dbUser = {
             "userID": interaction.user.id,
-            "userName": interaction.member.nickname,
+            "userName": interaction.member.nickname ? interaction.member.nickname : interaction.user.username,
             "teamName": teamName,
             "isAdmin": true,
             "teamColor": (teamColor),
