@@ -3,6 +3,7 @@ const { MongoClient } = require("mongodb")
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = discord;
 const { invite_member } = require("../../commands/chat_input_command/inviteMember.js");
 const { script } = require("../../commands/chat_input_command/createTeam.js");
+const { deleteTeam } = require("../../commands/chat_input_command/deleteTeam.js");
 const { readData } = require("../../databaseFeatures/dbReadData.js");
 
 require("dotenv").config();
@@ -29,6 +30,9 @@ module.exports = {
                 }
                 if (interaction.commandName === "create_team") {
                     script(interaction, mongoClient, client);
+                }
+                if (interaction.commandName === "delete_team") {
+                    deleteTeam(interaction, mongoClient, client);
                 }
 
             }

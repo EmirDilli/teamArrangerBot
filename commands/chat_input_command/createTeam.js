@@ -5,6 +5,8 @@ const { readData } = require("../../databaseFeatures/dbReadData.js");
 const mongoose = require("mongoose");
 const {addData} = require("../../databaseFeatures/dbAddUser.js");
 
+require("dotenv").config();
+
 module.exports = {
     command: new SlashCommandBuilder()
         .setName("create_team")
@@ -106,7 +108,7 @@ module.exports = {
                     .setStyle(ButtonStyle.Success)
             );
 
-        const msg = await client.channels.cache.get("1022518275491500163").send({
+        const msg = await client.channels.cache.get(process.env.CHANNEL_ID).send({
             embeds: [embed],
             components: [row]
         });
