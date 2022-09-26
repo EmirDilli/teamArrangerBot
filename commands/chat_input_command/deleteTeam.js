@@ -37,7 +37,21 @@ module.exports = {
         //  deleting embed message of the team
         const embedMessageID = adminUser.teamEmbedID;
 
-        const embedMsg = await client.guilds.cache.get(process.env.GUILD_ID).channels.cache.get(process.env.CHANNEL_ID).messages.fetch(embedMessageID);
+        //  fetches the embed message and catching error if there is available
+        let embedMsg;
+        
+        await client.guilds.cache.get(process.env.GUILD_ID).channels.cache.get(process.env.CHANNEL_ID).messages.fetch(embedMessageID)
+            .then((msg) => {embedMsg = msg;})
+            .catch((err) => {
+
+                interaction.reply({
+                    content: "Error occured while deleting your team! Please try again later.",
+                    ephemeral: true
+                });
+
+                return;
+            });
+
         
         await embedMsg.delete();
 
