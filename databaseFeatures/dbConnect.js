@@ -56,7 +56,13 @@ module.exports = async () => {
             teamEmbedID: {
                 type: String,
                 required: true
+            },
+
+            appliedTeams: {
+                type: Array,
+                required: false
             }
+            
         });
 
         return mongoose.model("users" , collection_structure);
