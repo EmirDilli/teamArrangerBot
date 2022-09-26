@@ -16,10 +16,6 @@ module.exports = {
     async event(client, mongoClient){
         
         client.on("messageCreate", async (msg) => {
-            if(!msg.author.bot){
-                //add xp to the user
-                addXP(mongoClient, msg.author.id, 0.1)
-            }
            
         });
 

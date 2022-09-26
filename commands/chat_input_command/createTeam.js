@@ -49,7 +49,7 @@ module.exports = {
      * @param {Client} client
      */
 
-    async script(interaction, mongoClient, client) {
+    async createTeam(interaction, mongoClient, client) {
 
         // checking if the interacted user is already in a team
         if ((await readData(mongoClient, { "userID": interaction.user.id })).length !== 0) {
