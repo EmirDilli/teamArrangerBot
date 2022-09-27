@@ -1,4 +1,4 @@
-const { SlashCommandBuilder , CommandInteraction , Client} = require("discord.js");
+const { SlashCommandBuilder , CommandInteraction , Client , EmbedBuilder} = require("discord.js");
 const discord = require("discord.js");
 const colors = require("../../constants/colors");
 const mongoose = require("mongoose");
@@ -37,6 +37,8 @@ module.exports = {
             .setDescription("Customize your team's logo!")
         ),
 
+
+
     /**
      * 
      * @param {CommandInteraction} interaction 
@@ -46,7 +48,7 @@ module.exports = {
     async customize_team(interaction, mongoClient, client){
 
         //  checking if interacted user is an admin in any particular team
-        const adminUser = await readData(mongoClient,{"userID" : interaction.user.id});
+        let adminUser = await readData(mongoClient,{"userID" : interaction.user.id});
         
         if(adminUser.length === 0){
 
@@ -67,16 +69,123 @@ module.exports = {
             return;
         }
 
+        adminUser = adminUser[0];
+
+        //  implementing the team's name to a variable!!!! important!
+        let teamName = adminUser.teamName;
+        console.log(teamName);
         //  getting customized data if they are individually present
-        const newTeamName = interaction.options.get("customize_team_name") ? interaction.options.get("customize_team_name") : null;
-        const newTeamDescription = interaction.options.get("customize_team_description") ? interaction.options.get("customize_team_description") : null;
-        const newTeamColor = interaction.options.get("customize_team_color") ? interaction.options.get("customize_team_color") : null;
-        const newTeamLogo = interaction.options.get("customize_team_logo") ? interaction.options.get("customize_team_logo") : null;
+        let newTeamName = interaction.options.get("customize_team_name") ? interaction.options.get("customize_team_name").value : null;
+        let newTeamDescription = interaction.options.get("customize_team_description") ? interaction.options.get("customize_team_description").value : null;
+        let newTeamColor = interaction.options.get("customize_team_color") ? interaction.options.get("customize_team_color").value : null;
+        let newTeamLogo = interaction.options.get("customize_team_logo") ? interaction.options.get("customize_team_logo").value : null;
+
+        const embedMsg = new EmbedBuilder()
+            .setAuthor({ "name": teamName })
+            .setColor(adminUser.teamColor)
+            .setDescription(adminUser.teamDescription)
+            .setThumbnail(adminUser.teamLogo)
+            .addFields({
+                "name": "Admin",
+                "value": `${interaction.member}`,
+                "inline": true
+            });
 
         //  checking and customizing the given datas individually
 
+        //  checking the new team name
         if(newTeamName){
 
+            //  checking if the new team name is unique
+            if((await readData(mongoClient, {"teamName": newTeamName})).length !== 0){
+
+                interaction.reply({
+                    content: "Unfortunately, your new team name is taken by another team! You should pick another name!",
+                    ephemeral: true
+                });
+                return;
+            }
+
+            embedMsg.setAuthor({"name": newTeamName});
+
+            await updateData(mongoClient, {"teamName" : teamName} , {"teamName" : newTeamName});
+
+            teamName = newTeamName;
+
+        }
+
+        if(newTeamColor){
+            
+            embedMsg.setColor(newTeamColor);
+
+            await updateData(mongoClient, {"teamName" : teamName} , {"teamColor" : newTeamColor});
+
+        }
+
+        if(newTeamLogo){
+            
+            try {
+                embed.setThumbnail(newTeamLogo);
+            } catch (error) {
+                newTeamLogo = null;
+            }
+
+            await updateData(mongoClient, {"teamName" : teamName} , {"teamLogo" : newTeamLogo});
+
+        }
+
+        if(newTeamDescription){
+            
+            embedMsg.setDescription(newTeamDescription);
+
+            await updateData(mongoClient, {"teamName" : teamName} , {"teamDescription" : newTeamDescription});
+
+        }
+
+        //  adding embed message, the non-admin members of the team
+        const members = await readData(mongoClient, {"teamName" : teamName});
+
+        members.forEach(async member => {
+
+            if(!member.isAdmin){
+
+                embedMsg.addFields({
+                    "name": "Member",
+                    "value": await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(member.userID),
+                    "inline": true
+                });
+
+            }
+        });
+
+        //  deciding whether Apply button
+        if(members.length < 3){
+
+            const embedID = adminUser.teamEmbedID;
+            const embed = await client.guilds.cache.get(process.env.GUILD_ID).channels.cache.get(process.env.CHANNEL_ID).messages.fetch(embedID);
+            await embed.edit({
+                embeds: [embedMsg]
+            });
+
+            interaction.reply({
+                content: "You've customized your team successfully!",
+                ephemeral: true
+            });
+
+        }
+        else{
+
+            const embedID = adminUser.teamEmbedID;
+            const embed = await client.guilds.cache.get(process.env.GUILD_ID).channels.cache.get(process.env.CHANNEL_ID).messages.fetch(embedID);
+            await embed.edit({
+                embeds: [embedMsg],
+                components: []
+            });
+
+            interaction.reply({
+                content: "You've customized your team successfully!",
+                ephemeral: true
+            });
         }
 
     }

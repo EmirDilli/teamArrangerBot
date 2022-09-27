@@ -5,6 +5,7 @@ const { inviteMember } = require("../../commands/chat_input_command/inviteMember
 const { createTeam } = require("../../commands/chat_input_command/createTeam.js");
 const { deleteTeam } = require("../../commands/chat_input_command/deleteTeam.js");
 const { kickMember } = require("../../commands/chat_input_command/kickMember.js");
+const { customize_team } = require("../../commands/chat_input_command/customizeTeam.js");
 const { readData } = require("../../databaseFeatures/dbReadData.js");
 const {applyTeam} = require("../../features/teamApply");
 
@@ -39,6 +40,9 @@ module.exports = {
                 }
                 if (interaction.commandName === "kick_member") {
                     kickMember(interaction, mongoClient, client);
+                }
+                if (interaction.commandName === "customize_team") {
+                    customize_team(interaction, mongoClient, client);
                 }
 
             }

@@ -109,11 +109,12 @@ module.exports = {
             components: [row]
         }).catch((err) => {
             console.log("Error occured while sending the application the admin: " + err);
-        })
+        });
+
         modalSubmitInteraction.reply({
             content: "Your application has been sent to the team's admin succesfully!",
             ephemeral: true
-        })
+        });
     
     }
 }
