@@ -71,8 +71,10 @@ module.exports = {
                     )
             )
         await interaction.showModal(modal);
-        const modalSubmitInteraction = await interaction.awaitModalSubmit({ filter: () => { console.log('modal submit'); return true }, time: 10000 }).catch(console.error)
-
+        const modalSubmitInteraction = await interaction.awaitModalSubmit({ filter: () => { console.log('modal submit'); return true }, time: 1000 * 60 * 60 * 24 });
+       
+        modalSubmitInteraction.reply({content: "Your Apply Request has been sent to the admin, successfully",ephemeral: true});
+        
 
         const textInput = (modalSubmitInteraction.fields.getTextInputValue('infoMessage')) ? modalSubmitInteraction.fields.getTextInputValue('infoMessage') : "";
 
@@ -81,7 +83,12 @@ module.exports = {
             .setTitle("Joining Request To Your Team")
             .setDescription(`${interaction.member} from the Algo Teams wants to join to your team! If you're interested, you can interact with ${interaction.member} and accept the request.`)
             .setThumbnail("https://media.istockphoto.com/vectors/agreement-color-line-icon-documentation-status-linear-vector-request-vector-id1271490971?k=20&m=1271490971&s=612x612&w=0&h=AuGYSNj2B9lBBFWZ4CWaI39-VXxYE_b4EMzsbLR8OC4=")
-            .setColor("Random");
+            .setColor("Random")
+            .addFields({ name: '\u200b', value: '\u200b' })
+            .addFields({
+                name: "User Info",
+                value: textInput
+            });
 
         const row = new ActionRowBuilder()
             .addComponents(new ButtonBuilder()
@@ -103,7 +110,7 @@ module.exports = {
         })
             .then(() => {
 
-                interaction.reply({
+                interaction.editReply({
                     content: "Your application has been sent to the team's admin succesfully!",
                     ephemeral: true
                 })
