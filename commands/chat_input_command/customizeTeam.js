@@ -95,7 +95,7 @@ module.exports = {
 
         //  checking the new team name
         if(newTeamName){
-
+            
             //  checking if the new team name is unique
             if((await readData(mongoClient, {"teamName": newTeamName})).length !== 0){
 
@@ -125,8 +125,9 @@ module.exports = {
         if(newTeamLogo){
             
             try {
-                embed.setThumbnail(newTeamLogo);
+                embedMsg.setThumbnail(newTeamLogo);
             } catch (error) {
+                console.log(error);
                 newTeamLogo = null;
             }
 
