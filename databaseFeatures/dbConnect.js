@@ -30,7 +30,7 @@ module.exports = async () => {
 
             teamName: {
                 type: String,
-                required: true
+                required: false
             },
 
             isAdmin: {
@@ -55,7 +55,7 @@ module.exports = async () => {
 
             teamEmbedID: {
                 type: String,
-                required: true
+                required: false
             },
 
             appliedTeams: {
