@@ -52,6 +52,7 @@ module.exports = {
                 return;
             });
 
+        await interaction.member.roles.remove(process.env.ADMIN_ROLE_ID);
         
         await embedMsg.delete();
 

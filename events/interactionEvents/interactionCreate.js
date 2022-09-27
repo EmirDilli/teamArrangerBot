@@ -44,6 +44,8 @@ module.exports = {
             //  button interactions
             if (interaction.isButton()) {
 
+
+                
                 // team apply button is pressed
                 if (interaction.customId.startsWith("teamApply")) {
 
@@ -113,13 +115,13 @@ module.exports = {
 
                     const row = new ActionRowBuilder()
                         .addComponents(new ButtonBuilder()
-                            .setCustomId("acceptButton")
+                            .setCustomId(`acceptApply.${interaction.user.id}`)
                             .setLabel("Accept")
                             .setEmoji("✅")
                             .setStyle(ButtonStyle.Primary)
                         )
                         .addComponents(new ButtonBuilder()
-                            .setCustomId("rejectButton")
+                            .setCustomId(`rejectApply.${interaction.user.id}`)
                             .setLabel("Reject")
                             .setEmoji("❌")
                             .setStyle(ButtonStyle.Secondary)

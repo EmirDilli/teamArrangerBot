@@ -1,9 +1,10 @@
-const { SlashCommandBuilder, CommandInteraction, EmbedBuilder, Client , ActionRowBuilder , ButtonBuilder , ButtonStyle} = require("discord.js");
+const { SlashCommandBuilder, CommandInteraction, EmbedBuilder, Client, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
 const discord = require("discord.js");
 const colors = require("../../constants/colors")
 const { readData } = require("../../databaseFeatures/dbReadData.js");
 const mongoose = require("mongoose");
-const {addData} = require("../../databaseFeatures/dbAddUser.js");
+const { addData } = require("../../databaseFeatures/dbAddUser.js");
+
 require("dotenv").config();
 
 module.exports = {
@@ -90,13 +91,13 @@ module.exports = {
         if (teamColor) embed.setColor(teamColor);
 
         // have to check if the url is valid
-        if (teamLogo){
+        if (teamLogo) {
             try {
                 embed.setThumbnail(teamLogo);
             } catch (error) {
                 teamLogo = null;
             }
-        } 
+        }
         if (teamDescription) embed.setDescription(teamDescription);
 
         
@@ -108,6 +109,10 @@ module.exports = {
                     .setLabel("Apply")
                     .setStyle(ButtonStyle.Success)
             );
+
+        const teamAdminRole = await client.guilds.cache.get(process.env.GUILD_ID).roles.cache.get(process.env.ADMIN_ROLE_ID);
+
+        await interaction.member.roles.add(process.env.ADMIN_ROLE_ID);
 
         const msg = await client.channels.cache.get(process.env.CHANNEL_ID).send({
             embeds: [embed],
@@ -126,7 +131,8 @@ module.exports = {
             "teamEmbedID": (msg.id)
         }
 
-        await addData(mongoClient,dbUser);
+        await addData(mongoClient, dbUser);
+
 
         interaction.reply({
             content: "Your team has been succesfully created!",
