@@ -45,7 +45,7 @@ module.exports = {
 
             //  button interactions
             if (interaction.isButton()) {
-                
+                /* const applier = readData({userID: }) */
                 if (interaction.customId.startsWith("teamApply")){
                     applyTeam(interaction, mongoClient, client);
                 }

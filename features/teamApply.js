@@ -72,8 +72,8 @@ module.exports = {
             )
         await interaction.showModal(modal);
         const modalSubmitInteraction = await interaction.awaitModalSubmit({ filter: () => { console.log('modal submit'); return true }, time: 1000 * 60 * 60 * 24 });
-       
-        modalSubmitInteraction.reply({content: "Your Apply Request has been sent to the admin, successfully",ephemeral: true});
+        
+        
         
 
         const textInput = (modalSubmitInteraction.fields.getTextInputValue('infoMessage')) ? modalSubmitInteraction.fields.getTextInputValue('infoMessage') : "";
@@ -107,19 +107,14 @@ module.exports = {
         user.send({
             embeds: [embed],
             components: [row]
+        }).catch((err) => {
+            console.log("Error occured while sending the application the admin: " + err);
         })
-            .then(() => {
-
-                interaction.editReply({
-                    content: "Your application has been sent to the team's admin succesfully!",
-                    ephemeral: true
-                })
-
-            })
-            .catch((err) => {
-                console.log("Error occured while sending the application the admin: " + err);
-            });
-
+        modalSubmitInteraction.reply({
+            content: "Your application has been sent to the team's admin succesfully!",
+            ephemeral: true
+        })
+    
     }
 }
 
