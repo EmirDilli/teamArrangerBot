@@ -4,7 +4,6 @@ const colors = require("../../constants/colors")
 const { readData } = require("../../databaseFeatures/dbReadData.js");
 const mongoose = require("mongoose");
 const {addData} = require("../../databaseFeatures/dbAddUser.js");
-
 require("dotenv").config();
 
 module.exports = {
@@ -49,7 +48,7 @@ module.exports = {
      * @param {Client} client
      */
 
-    async createTeam(interaction, mongoClient, client) {
+    async  createTeam(interaction, mongoClient, client) {
 
         // checking if the interacted user is already in a team
         if ((await readData(mongoClient, { "userID": interaction.user.id })).length !== 0) {
@@ -99,6 +98,8 @@ module.exports = {
             }
         } 
         if (teamDescription) embed.setDescription(teamDescription);
+
+        
 
         const row = new ActionRowBuilder()
             .addComponents(

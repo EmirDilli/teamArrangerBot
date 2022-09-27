@@ -83,6 +83,27 @@ module.exports = {
                         return;
                     }
 
+                    const modal = new discord.ModalBuilder()
+                    .setCustomId("userInfoModal")
+                    .setTitle('User Info')
+                    .setComponents(
+                        new ActionRowBuilder()
+                            .setComponents(
+                                new discord.TextInputBuilder()
+                                    .setCustomId('infoMessage')
+                                    .setLabel('User Info')
+                                    .setStyle(discord.TextInputStyle.Paragraph)
+                                    .setRequired(true)
+                                    .setMinLength(10)
+                                    .setMaxLength(500)
+                            )
+                    )
+                await interaction.showModal(modal);
+                const modalSubmitInteraction = await interaction.awaitModalSubmit({filter: () => {console.log('modal submit'); return true}, time: 10000}).catch(console.error)
+                
+                
+                const textInput = (modalSubmitInteraction.fields.getTextInputValue('infoMessage'))? modalSubmitInteraction.fields.getTextInputValue('infoMessage') : "";
+
                     //  code enters here if all the conditions are satisfied
                     const embed = new EmbedBuilder()
                         .setTitle("Joining Request To Your Team")
