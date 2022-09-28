@@ -8,6 +8,7 @@ const { kickMember } = require("../../commands/chat_input_command/kickMember.js"
 const { customize_team } = require("../../commands/chat_input_command/customizeTeam.js");
 const { readData } = require("../../databaseFeatures/dbReadData.js");
 const { applyTeam } = require("../../features/teamApply");
+const { inviteAccept } = require("../../features/applicationAccept.js");
 const { addData } = require("../../databaseFeatures/dbAddUser.js");
 const { updateData } = require("../../databaseFeatures/dbUpdateUser.js");
 
@@ -52,6 +53,11 @@ module.exports = {
             //  button interactions
             if (interaction.isButton()) {
                 
+                if(interaction.customId.startsWith("apply")){
+                    if(interaction.customId.startsWith("applyAccept")){
+                        await inviteAccept(interaction, mongoClient, client);
+                    }
+                }
 
                 if (interaction.customId.startsWith("teamApply")) {
 
