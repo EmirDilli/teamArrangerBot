@@ -84,7 +84,6 @@ module.exports = {
             .setAuthor({ "name": teamName })
             .setColor(adminUser.teamColor)
             .setDescription(adminUser.teamDescription)
-            .setThumbnail(adminUser.teamLogo)
             .addFields({
                 "name": "Admin",
                 "value": `${interaction.member}`,
