@@ -105,12 +105,12 @@ module.exports = {
                                 "userID":interaction.user.id
                             },
                             {
-                                "appliedTeams": await readData(mongoClient, {
+                                "appliedTeams": (await readData(mongoClient, {
                                     "userID":interaction.user.id
-                                })[0].appliedTeams.push(await readData(mongoClient, {
+                                }))[0].appliedTeams.push((await readData(mongoClient, {
                                     "userID": interaction.customId.split(".")[1]
-                                })[0].teamName)
-                            })
+                                }))[0].teamName)
+                            });
 
                             //apply team button
                             await applyTeam(interaction, mongoClient, client);

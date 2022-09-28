@@ -4,6 +4,8 @@ const colors = require("../../constants/colors")
 const { readData } = require("../../databaseFeatures/dbReadData.js");
 const mongoose = require("mongoose");
 const { addData } = require("../../databaseFeatures/dbAddUser.js");
+const { updateData } = require("../../databaseFeatures/dbUpdateUser.js");
+const {embedBuilder} = require("../../features/embedTeamBuilder.js");
 
 require("dotenv").config();
 
@@ -79,29 +81,24 @@ module.exports = {
         const teamLogo = interaction.options.get("logo_url") ? interaction.options.get("logo_url").value : null;
         const teamDescription = interaction.options.get("team_description") ? interaction.options.get("team_description").value : null;
 
-        //  constructing embed message of the created team
-        const embed = new EmbedBuilder()
-            .setAuthor({ "name": teamName })
-            .addFields({
-                name: "Admin",
-                value: `${interaction.member}`,
-                inline: true
-            });
-
-        if (teamColor) embed.setColor(teamColor);
-
-        // have to check if the url is valid
-        if (teamLogo) {
-            try {
-                embed.setThumbnail(teamLogo);
-            } catch (error) {
-                teamLogo = null;
-            }
+        //  adding the user data into database
+        const dbUser = {
+            "userID": interaction.user.id,
+            "userName": interaction.member.nickname ? interaction.member.nickname : interaction.user.username,
+            "teamName": teamName,
+            "isAdmin": true,
+            "teamColor": (teamColor),
+            "teamLogo": (teamLogo),
+            "teamDescription": (teamDescription),
+            "teamEmbedID": null
         }
-        if (teamDescription) embed.setDescription(teamDescription);
 
-        
+        let members;
 
+        await addData(mongoClient, dbUser);
+
+        //  constructing embed message of the created team
+        const embedMsg = await embedBuilder(client, teamName, teamColor, teamDescription, teamLogo, [{"userID": interaction.user.id, "isAdmin": true}]);
         const row = new ActionRowBuilder()
             .addComponents(
                 new ButtonBuilder()
@@ -115,24 +112,11 @@ module.exports = {
         await interaction.member.roles.add(process.env.ADMIN_ROLE_ID);
 
         const msg = await client.channels.cache.get(process.env.CHANNEL_ID).send({
-            embeds: [embed],
+            embeds: [embedMsg],
             components: [row]
         });
 
-        //  adding the user data into database
-        const dbUser = {
-            "userID": interaction.user.id,
-            "userName": interaction.member.nickname ? interaction.member.nickname : interaction.user.username,
-            "teamName": teamName,
-            "isAdmin": true,
-            "teamColor": (teamColor),
-            "teamLogo": (teamLogo),
-            "teamDescription": (teamDescription),
-            "teamEmbedID": (msg.id)
-        }
-
-        await addData(mongoClient, dbUser);
-
+        await updateData(mongoClient, {"userID": interaction.user.id} , {"teamEmbedID": (msg.id)});
 
         interaction.reply({
             content: "Your team has been succesfully created!",
