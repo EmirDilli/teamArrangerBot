@@ -6,7 +6,9 @@ const { createTeam } = require("../../commands/chat_input_command/createTeam.js"
 const { deleteTeam } = require("../../commands/chat_input_command/deleteTeam.js");
 const { kickMember } = require("../../commands/chat_input_command/kickMember.js");
 const { customize_team } = require("../../commands/chat_input_command/customizeTeam.js");
-const { applyTeam } = require("../../features/teamApply");
+const { applyTeamButton } = require("../../features/teamApplyButton");
+const { applyTeamModal } = require("../../features/teamApplyModal");
+const teamApplyModal = require("../../features/teamApplyModal");
 
 
 
@@ -53,10 +55,17 @@ module.exports = {
                 
 
                 if (interaction.customId.startsWith("teamApply")) {
-                    applyTeam(interaction,mongoClient,client)
+                    applyTeamButton(interaction,mongoClient,client)
 
                 }
 
+            }
+
+            if(interaction.isModalSubmit()){
+                if(interaction.customId.startsWith("userInfo")){
+                    applyTeamModal(interaction,mongoClient,client);
+                }
+                
             }
 
         });
