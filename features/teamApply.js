@@ -1,6 +1,7 @@
 const discord = require("discord.js");
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, Client } = require("discord.js");
 const { readData } = require("../databaseFeatures/dbReadData.js");
+const { addData } = require("../databaseFeatures/dbAddUser.js");
 const mongoose = require("mongoose");
 
 require("dotenv").config();
@@ -18,13 +19,16 @@ module.exports = {
     async applyTeam(interaction, mongoClient, client) {
         // team apply button is pressed
 
+        let modalSubmitInteraction;
+        const receiverID = interaction.customId.split(".")[1];
+        const receiver = client.guilds.cache.get(process.env.GUILD_ID).members.cache.get(receiverID);
+        const applierID = interaction.user.id;
 
-        const userID = interaction.customId.split(".")[1];
-
-        const user = await client.guilds.cache.get(process.env.GUILD_ID).members.cache.get(userID);
-
+        const applierDB = await readData(mongoClient, { "userID": applierID});
+        const receiverDB =  await readData(mongoClient, {"userID": receiverID})
+       
         //  checks if the user has sent the application to itself
-        if (interaction.user.id === userID) {
+        if (applierID === receiverID) {
 
             interaction.reply({
                 content: "You cannot send application to yourself, you know that, right?",
@@ -35,7 +39,7 @@ module.exports = {
         }
 
         //  check if the interacted user is already in a team
-        if ((await readData(mongoClient, { "userID": interaction.user.id })).length !== 0) {
+        if (applierDB.length != 0 && applierDB[0].teamName != null) {
 
             interaction.reply({
                 content: "You already seem to be in another team! If you still want to apply to this team, you should leave your current team first.",
@@ -45,8 +49,9 @@ module.exports = {
             return;
         }
 
+        
         //  checks if the admin of the applied team is not in the server anymore
-        if (!user) {
+        if (!receiver) {
             interaction.reply({
                 content: "This user cannot be found from the Algo Teams server! Therefore, your request cannot be made!",
                 ephemeral: true
@@ -54,7 +59,6 @@ module.exports = {
 
             return;
         }
-
         const modal = new discord.ModalBuilder()
             .setCustomId("userInfoModal")
             .setTitle('User Info')
@@ -70,11 +74,65 @@ module.exports = {
                             .setMaxLength(500)
                     )
             )
-        await interaction.showModal(modal);
-        const modalSubmitInteraction = await interaction.awaitModalSubmit({ filter: () => { console.log('modal submit'); return true }, time: 1000 * 60 * 60 * 24 });
-        
-        
-        
+
+
+        //if not add the data to the database
+        if (applierDB.length === 0) {
+            
+            await interaction.showModal(modal);
+            modalSubmitInteraction = await interaction.awaitModalSubmit({ filter: (i) => {return i.isModalSubmit(); }, time: 1000 * 60 * 60 * 24 });
+            
+            await addData(mongoClient, {
+                "userID": interaction.user.id,
+                "userName": interaction.member.nickname ? interaction.member.nickname : interaction.user.username,
+                "teamName": null,
+                "isAdmin": false,
+                "teamColor": null,
+                "teamLogo": null,
+                "teamDescription": null,
+                "teamEmbedID": null,
+                "appliedTeams": [
+                    receiverDB[0].teamName
+                ]
+            })
+        }
+
+        //if it is in the database
+        else if (applierDB.length !== 0) {
+
+            //variable to check if the variable is in the database appliedTeam array
+            const appliedTeam = applierDB[0].appliedTeams.find(async element => element === receiverDB[0].teamName)
+            
+            
+            //if it is not in the database
+            if (!appliedTeam) {
+                
+                await interaction.showModal(modal);
+                modalSubmitInteraction = await interaction.awaitModalSubmit({ filter: (i) => { console.log(i.isModalSubmit()); return true; }, time: 1000 * 60 * 60 * 24 });
+                
+                //update the teamName array
+                await updateData(mongoClient, 
+                    {
+                    "userID": interaction.user.id
+                    },
+                    {
+                        "appliedTeams": applierDB[0].appliedTeams.push(receiverDB[0].teamName)
+                    })
+            }
+
+            //if it is in the database appliedTeam array
+            else if (appliedTeam) {
+                interaction.reply({
+                    content: "You cannot apply more than once!",
+                    ephemeral: true
+                })
+                return;
+            }
+
+
+        }
+
+
 
         const textInput = (modalSubmitInteraction.fields.getTextInputValue('infoMessage')) ? modalSubmitInteraction.fields.getTextInputValue('infoMessage') : "";
 
@@ -104,7 +162,7 @@ module.exports = {
                 .setStyle(ButtonStyle.Secondary)
             );
 
-        user.send({
+        receiver.send({
             embeds: [embed],
             components: [row]
         }).catch((err) => {
@@ -115,7 +173,7 @@ module.exports = {
             content: "Your application has been sent to the team's admin succesfully!",
             ephemeral: true
         });
-    
+
     }
 }
 
