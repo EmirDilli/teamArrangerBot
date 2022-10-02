@@ -6,10 +6,12 @@ const { createTeam } = require("../../commands/chat_input_command/createTeam.js"
 const { deleteTeam } = require("../../commands/chat_input_command/deleteTeam.js");
 const { kickMember } = require("../../commands/chat_input_command/kickMember.js");
 const { customize_team } = require("../../commands/chat_input_command/customizeTeam.js");
+const { leaveTeam } = require("../../commands/chat_input_command/leaveTeam.js");
 const { applyTeamButton } = require("../../features/teamApplyButton");
 const { applyTeamModal } = require("../../features/teamApplyModal");
 const { readData } = require("../../databaseFeatures/dbReadData.js");
 const { inviteAccept } = require("../../features/applicationAccept.js");
+
 const { kickMemberModal } = require("../../features/kickMemberModal")
 
 
@@ -49,6 +51,9 @@ module.exports = {
                 }
                 if (interaction.commandName === "customize_team") {
                     customize_team(interaction, mongoClient, client);
+                }
+                if (interaction.commandName === "leave_team") {
+                    leaveTeam(interaction, mongoClient, client);
                 }
 
             }

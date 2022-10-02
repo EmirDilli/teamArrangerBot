@@ -53,10 +53,14 @@ module.exports = {
 
     async  createTeam(interaction, mongoClient, client) {
 
+        interaction.deferReply({
+            ephemeral: true
+        });
+
         // checking if the interacted user is already in a team
         if ((await readData(mongoClient, { "userID": interaction.user.id })).length !== 0) {
 
-            interaction.reply({
+            interaction.editReply({
                 content: "You are already in a team. If you want to create a new team, you should leave your current team.",
                 ephemeral: true
             });
@@ -69,7 +73,7 @@ module.exports = {
         //  checking if the given team name is already available
         if ((await readData(mongoClient, { "teamName": teamName })).length !== 0) {
 
-            interaction.reply({
+            interaction.editReply({
                 content: "This team name has already been taken, you should pick another team name!",
                 ephemeral: true
             });
@@ -118,7 +122,7 @@ module.exports = {
 
         await updateData(mongoClient, {"userID": interaction.user.id} , {"teamEmbedID": (msg.id)});
 
-        interaction.reply({
+        interaction.editReply({
             content: "Your team has been succesfully created!",
             ephemeral: true
         });

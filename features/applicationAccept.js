@@ -93,7 +93,6 @@ module.exports = {
                 .then(async () => {
 
                     members = await readData(mongoClient, { "teamName": teamName });
-                    console.log(members);
                     members.forEach(async member => {
 
                         if (!member.isAdmin) {
@@ -121,7 +120,7 @@ module.exports = {
 
             await acceptedUser.roles.add(process.env.MEMBER_ROLE_ID);
 
-            interaction.reply({
+            await interaction.reply({
                 content: "You've added this team member successfully!",
                 ephemeral: true
             });

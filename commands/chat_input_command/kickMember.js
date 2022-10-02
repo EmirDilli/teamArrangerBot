@@ -26,6 +26,11 @@ module.exports = {
      * @param {Client} client 
      */
     async kickMember(interaction, mongoClient, client){
+
+        interaction.deferReply({
+            ephemeral: true
+        });
+
         const kicked_memberId = interaction.customId.split(".")[1]
         const kicked_member = client.guilds.cache.get(process.env.GUILD_ID).members.cache.get(kicked_memberId);
         const adminUser = (await readData(mongoClient, {"userID" : interaction.user.id}))[0];
@@ -77,16 +82,14 @@ module.exports = {
             }
             
 
-            interaction.reply({
+            await interaction.editReply({
                 content: "Your kicking process has been done successfully!",
                 ephemeral: true
             })
 
-
-
-        }).catch((err) => {
+        }).catch(async (err) => {
             console.log("Error occured while kicking the member: " + err);
-            interaction.reply({
+            await interaction.editReply({
                 content: "Error occured while kicking the member",
                 ephemeral: true
             })

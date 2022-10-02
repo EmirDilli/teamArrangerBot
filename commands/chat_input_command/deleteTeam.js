@@ -20,13 +20,17 @@ module.exports = {
 
     async deleteTeam(interaction, mongoClient, client){
 
+        interaction.deferReply({
+            ephemeral: true
+        });
+
         const adminUser = (await readData(mongoClient, {"userID" : interaction.user.id}))[0];
         const isAdminUser = adminUser ? adminUser.isAdmin : null;
 
         //  checks if the interacted user is an admin in any particular team
         if(!isAdminUser){
 
-            interaction.reply({
+            await interaction.editReply({
                 content: "Since you're not an admin in any particular team, you're not authorized to execute this function.",
                 ephemeral: true
             });
@@ -44,7 +48,7 @@ module.exports = {
             .then((msg) => {embedMsg = msg;})
             .catch((err) => {
 
-                interaction.reply({
+                interaction.editReply({
                     content: "Error occured while deleting your team! Please try again later.",
                     ephemeral: true
                 });
@@ -66,6 +70,7 @@ module.exports = {
                 const teamMember = client.guilds.cache.get(process.env.GUILD_ID).members.cache.get(user.userID);
                 if(teamMember){
                     await deleteData(mongoClient, {"userID" : user.userID});
+                    await teamMember.roles.remove(process.env.MEMBER_ROLE_ID);
 
                     teamMember.send({
                         content: `${interaction.member} has deleted the ${user.teamName} team. Therefore, you're not a part of this team anymore. You can look for other teams on the server.`
@@ -78,7 +83,7 @@ module.exports = {
         //  delete the admin from the database itself
         await deleteData(mongoClient, {"userID" : interaction.user.id});
 
-        interaction.reply({
+        await interaction.editReply({
             content: `${adminUser.teamName} has been succesfully deleted!`,
             ephemeral: true
         });

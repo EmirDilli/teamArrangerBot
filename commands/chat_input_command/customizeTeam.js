@@ -47,12 +47,16 @@ module.exports = {
      */
     async customize_team(interaction, mongoClient, client){
 
+        interaction.deferReply({
+            ephemeral: true
+        });
+
         //  checking if interacted user is an admin in any particular team
         let adminUser = await readData(mongoClient,{"userID" : interaction.user.id});
         
         if(adminUser.length === 0){
 
-            interaction.reply({
+            interaction.editReply({
                 content: "You don't seem to be in any team. You should be a team's admin in order to customize the team.",
                 ephemeral: true
             });
@@ -62,7 +66,7 @@ module.exports = {
 
         if(adminUser[0].isAdmin === false){
 
-            interaction.reply({
+            interaction.editReply({
                 content: "You have to be the admin of your team in order to customize the team.",
                 ephemeral: true
             });
@@ -98,7 +102,7 @@ module.exports = {
             //  checking if the new team name is unique
             if((await readData(mongoClient, {"teamName": newTeamName})).length !== 0){
 
-                interaction.reply({
+                interaction.editReply({
                     content: "Unfortunately, your new team name is taken by another team! You should pick another name!",
                     ephemeral: true
                 });
@@ -167,7 +171,7 @@ module.exports = {
                 embeds: [embedMsg]
             });
 
-            interaction.reply({
+            interaction.editReply({
                 content: "You've customized your team successfully!",
                 ephemeral: true
             });
@@ -182,7 +186,7 @@ module.exports = {
                 components: []
             });
 
-            interaction.reply({
+            interaction.editReply({
                 content: "You've customized your team successfully!",
                 ephemeral: true
             });

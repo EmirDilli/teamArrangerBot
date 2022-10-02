@@ -71,12 +71,11 @@ module.exports = {
             }
 
 
-
         }
 
 
        
-        const textInput = (interaction.fields.getTextInputValue('infoMessage')) ? interaction.fields.getTextInputValue('infoMessage') : "";
+        const textInput = (await interaction.fields.getTextInputValue('infoMessage')) ? await interaction.fields.getTextInputValue('infoMessage') : "";
         
         
 
@@ -113,7 +112,7 @@ module.exports = {
             console.log("Error occured while sending the application the admin: " + err);
         });
 
-        interaction.reply({
+        await interaction.reply({
             content: "Your application has been sent to the team's admin succesfully!",
             ephemeral: true
         });

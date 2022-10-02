@@ -23,6 +23,10 @@ module.exports = {
 
     async inviteMember(interaction, mongoClient) {
 
+        interaction.deferReply({
+            ephemeral: true
+        });
+
         const invited_user = interaction.options.get("invite_member").user;
 
         const adminUser = (await readData(mongoClient, {"userID" : interaction.user.id}))[0];
@@ -31,7 +35,7 @@ module.exports = {
         //  checks if the interacted user is an admin in any particular team
         if(!isAdminUser){
 
-            interaction.reply({
+            interaction.editReply({
                 content: "Since you're not an admin in any particular team, you're not authorized to execute this function.",
                 ephemeral: true
             });
@@ -41,7 +45,7 @@ module.exports = {
         //  checking if the selected user is valid for invitation
         if (invited_user.bot || invited_user.id === interaction.user.id) {
 
-            interaction.reply({
+            interaction.editReply({
                 content: "You have to select a member who is not a bot nor you.",
                 ephemeral: true
             });
@@ -51,7 +55,7 @@ module.exports = {
         //  checking if the invited user has already a team
         if ((await readData(mongoClient, {"userID" : invited_user.id})).length !== 0) {
 
-            interaction.reply({
+            interaction.editReply({
                 content: "This invited user is already in a team!",
                 ephemeral: true
             });
@@ -63,7 +67,7 @@ module.exports = {
 
         if ((await readData(mongoClient, {"teamName" : teamName})).length === 3) {
 
-            interaction.reply({
+            interaction.editReply({
                 content: "Your team has full capacity to invite another member!",
                 ephemeral: true
             });
@@ -94,13 +98,13 @@ module.exports = {
             embeds: [embed],
             components: [row]
         }).then(() => {
-            interaction.reply({
+            interaction.editReply({
                 content: "Your invitation has been sent succesfully",
                 ephemeral: true
             })
         }).catch((err) => {
             console.log("Error occured while sending team invitation: " + err);
-            interaction.reply({
+            interaction.editReply({
                 content: "Error occured while sending team invitation",
                 ephemeral: true
             })

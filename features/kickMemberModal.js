@@ -35,7 +35,7 @@ module.exports = {
         //  checking if the selected user is valid for invitation
         if (kicked_member.bot || kicked_member.user.id === interaction.user.id) {
 
-            interaction.reply({
+            await interaction.reply({
                 content: "You have to select a member who is not a bot nor you.",
                 ephemeral: true
             });
