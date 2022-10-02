@@ -17,12 +17,16 @@ module.exports = {
 
     async inviteAccept(interaction, mongoClient, client) {
 
+        interaction.deferReply({
+            ephemeral: true
+        });
+
         //  getting the accepted user
         const acceptedUserID = interaction.customId.split(".")[1];
         const acceptedUser = await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(acceptedUserID)
             .catch(err => {
 
-                interaction.reply({
+                interaction.editReply({
                     content: "Error occured while processing the invitation accept!",
                     ephemeral: true
                 });
@@ -35,7 +39,7 @@ module.exports = {
 
             if ((await readData(mongoClient, { "userID": acceptedUser.id }))[0].teamName !== null) {
 
-                interaction.reply({
+                interaction.editReply({
                     content: "This invited user is already in a team!",
                     ephemeral: true
                 });
@@ -51,7 +55,7 @@ module.exports = {
 
         if ((await readData(mongoClient, { "teamName": teamName })).length === 3) {
 
-            interaction.reply({
+            interaction.editReply({
                 content: "Your team has full capacity to invite another member!",
                 ephemeral: true
             });
@@ -120,7 +124,7 @@ module.exports = {
 
             await acceptedUser.roles.add(process.env.MEMBER_ROLE_ID);
 
-            await interaction.reply({
+            await interaction.editReply({
                 content: "You've added this team member successfully!",
                 ephemeral: true
             });
@@ -137,7 +141,7 @@ module.exports = {
 
             await acceptedUser.roles.add(process.env.MEMBER_ROLE_ID);
 
-            interaction.reply({
+            interaction.editReply({
                 content: "You've added this team member successfully!",
                 ephemeral: true
             });

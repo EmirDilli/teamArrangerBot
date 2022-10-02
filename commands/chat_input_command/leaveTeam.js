@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, CommandInteraction, Client } = require("discord.js");
+const { SlashCommandBuilder, CommandInteraction, Client , ActionRowBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle} = require("discord.js");
 const discord = require("discord.js");
 const mongoose = require("mongoose");
 const { readData } = require("../../databaseFeatures/dbReadData.js");
@@ -17,8 +17,8 @@ module.exports = {
 
     /**
      * 
-     * @param {CommandInteraction} interaction 
-     * @param {mongoose.Model} mongoClient 
+     * @param {CommandInteraction} interaction
+     * @param {mongoose.Model} mongoClient
      * @param {Client} client
      */
 
@@ -27,6 +27,8 @@ module.exports = {
         let leavingMember = (await readData(mongoClient, { "userID": interaction.user.id }));
         leavingMember = leavingMember.length !== 0 ? leavingMember[0] : null;
         const isAdminUser = leavingMember ? leavingMember.isAdmin : null;
+        const admin = (await readData(mongoClient, { "teamName": leavingMember.teamName, "isAdmin": true }))[0];
+        let row;
 
         //  checks if the interacted user is in ay particular team
         if (isAdminUser === null) {
@@ -50,7 +52,7 @@ module.exports = {
         interaction.deferReply({
             ephemeral: true
         });
-        
+
         let members;
 
         //  leaving member is an ADMIN
@@ -67,10 +69,28 @@ module.exports = {
             await updateData(mongoClient, { "userID": newAdmin.userID }, { "isAdmin": true });
             const newAdminMember = await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(newAdmin.userID);
 
+            const adminAnnouncement = new EmbedBuilder()
+                .setTitle("You're now the Admin of your team!")
+                .setDescription(`You're the new Admin of your team by default! Enjoy!`)
+                .setThumbnail("https://media.istockphoto.com/vectors/agreement-color-line-icon-documentation-status-linear-vector-request-vector-id1271490971?k=20&m=1271490971&s=612x612&w=0&h=AuGYSNj2B9lBBFWZ4CWaI39-VXxYE_b4EMzsbLR8OC4=")
+                .setColor("Random");
+
+            //  new teamApply customID attacher
+            row = new ActionRowBuilder()
+            .addComponents(
+                new ButtonBuilder()
+                    .setCustomId(`teamApply.${newAdmin.userID}`)
+                    .setLabel("Apply")
+                    .setStyle(ButtonStyle.Success)
+            );
+
             //  customizing roles
             adminClient.roles.remove(process.env.ADMIN_ROLE_ID);
             newAdminMember.roles.remove(process.env.MEMBER_ROLE_ID);
             newAdminMember.roles.add(process.env.ADMIN_ROLE_ID);
+            newAdminMember.send({
+                embeds: [adminAnnouncement]
+            });
 
         }
 
@@ -83,13 +103,22 @@ module.exports = {
             //  customizing roles
             await leavingMemberClient.roles.remove(process.env.MEMBER_ROLE_ID);
 
+            row = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId(`teamApply.${admin.userID}`)
+                        .setLabel("Apply")
+                        .setStyle(ButtonStyle.Success)
+                );
+
             members = await readData(mongoClient, { "teamName": leavingMember.teamName });
 
         }
 
         //editing embedMsg
-        const embedMsg = embedBuilder(client, newAdmin.teamName, newAdmin.teamColor, newAdmin.teamDescription, newAdmin.teamLogo, members);
-        const tempMsg = await client.guilds.cache.get(process.env.GUILD_ID).channels.cache.get(process.env.CHANNEL_ID).messages.fetch(adminUser.teamEmbedID);
+        const embedMsg = await embedBuilder(client, leavingMember.teamName, leavingMember.teamColor, leavingMember.teamDescription, leavingMember.teamLogo, members);
+        const tempMsg = await client.guilds.cache.get(process.env.GUILD_ID).channels.cache.get(process.env.CHANNEL_ID).messages.fetch(leavingMember.teamEmbedID);
+
 
         if (members.length === 3) {
             tempMsg.edit({
@@ -99,13 +128,6 @@ module.exports = {
         }
         else {
 
-            const row = new ActionRowBuilder()
-                .addComponents(
-                    new ButtonBuilder()
-                        .setCustomId(`teamApply.${adminUser.userID}`)
-                        .setLabel("Apply")
-                        .setStyle(ButtonStyle.Success)
-                );
             tempMsg.edit({
                 embeds: [embedMsg],
                 components: [row]
@@ -118,7 +140,6 @@ module.exports = {
             .setThumbnail("https://media.istockphoto.com/vectors/agreement-color-line-icon-documentation-status-linear-vector-request-vector-id1271490971?k=20&m=1271490971&s=612x612&w=0&h=AuGYSNj2B9lBBFWZ4CWaI39-VXxYE_b4EMzsbLR8OC4=")
             .setColor("Random");
 
-        const admin = (await readData(mongoClient, { "teamName": leavingMember.teamName, "isAdmin": true }))[0];
         const adminMember = await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(admin.userID);
 
         await adminMember.send({
@@ -131,8 +152,6 @@ module.exports = {
             });
 
         });
-
-
 
     }
 
