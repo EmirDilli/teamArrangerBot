@@ -10,8 +10,7 @@ const { applyTeamButton } = require("../../features/teamApplyButton");
 const { applyTeamModal } = require("../../features/teamApplyModal");
 const { readData } = require("../../databaseFeatures/dbReadData.js");
 const { inviteAccept } = require("../../features/applicationAccept.js");
-const { addData } = require("../../databaseFeatures/dbAddUser.js");
-const { updateData } = require("../../databaseFeatures/dbUpdateUser.js");
+const { kickMemberModal } = require("../../features/kickMemberModal")
 
 
 
@@ -45,7 +44,8 @@ module.exports = {
                     deleteTeam(interaction, mongoClient, client);
                 }
                 if (interaction.commandName === "kick_member") {
-                    kickMember(interaction, mongoClient, client);
+
+                    kickMemberModal(interaction, mongoClient, client);
                 }
                 if (interaction.commandName === "customize_team") {
                     customize_team(interaction, mongoClient, client);
@@ -73,7 +73,9 @@ module.exports = {
                 if(interaction.customId.startsWith("userInfo")){
                     applyTeamModal(interaction,mongoClient,client);
                 }
-                
+                else if(interaction.customId.startsWith("kickReason")){
+                    kickMember(interaction,mongoClient,client)
+                }
             }
 
         });

@@ -18,14 +18,14 @@ module.exports = {
 
     async applyTeamButton(interaction, mongoClient, client) {
         // team apply button is pressed
-
-        let modalSubmitInteraction;
         const receiverID = interaction.customId.split(".")[1];
+        const receiverDB =  await readData(mongoClient, {"userID": receiverID})
+        
         const receiver = client.guilds.cache.get(process.env.GUILD_ID).members.cache.get(receiverID);
         const applierID = interaction.user.id;
 
         const applierDB = await readData(mongoClient, { "userID": applierID});
-        const receiverDB =  await readData(mongoClient, {"userID": receiverID})
+        
        
         //  checks if the user has sent the application to itself
         if (applierID === receiverID) {
@@ -59,6 +59,30 @@ module.exports = {
 
             return;
         }
+
+
+        //if it is in the database
+        if (applierDB.length !== 0) {
+
+            //variable to check if the variable is in the database appliedTeam array
+            const appliedTeam = applierDB[0].appliedTeams.find(element => element === receiverDB[0].teamName)
+            
+            console.log(appliedTeam);
+            
+
+            //if it is in the database appliedTeam array
+            if (appliedTeam) {
+                interaction.reply({
+                    content: "You cannot apply more than once!",
+                    ephemeral: true
+                })
+                return;
+            }
+
+
+        }
+
+
         const modal = new discord.ModalBuilder()
             .setCustomId(`userInfo.${receiverID}`)
             .setTitle('User Info')
@@ -74,7 +98,7 @@ module.exports = {
                             .setMaxLength(500)
                     )
             )
-
+        
         await interaction.showModal(modal);
         
 

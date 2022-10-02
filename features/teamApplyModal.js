@@ -19,7 +19,7 @@ module.exports = {
     async applyTeamModal(interaction, mongoClient, client) {
         // team apply button is pressed
 
-        let modalSubmitInteraction;
+        
         const receiverID = interaction.customId.split(".")[1];
         const receiver = client.guilds.cache.get(process.env.GUILD_ID).members.cache.get(receiverID);
         const applierID = interaction.user.id;
@@ -59,7 +59,7 @@ module.exports = {
             if (!appliedTeam) {
                 let appliedTeamsArr = applierDB[0].appliedTeams
                 appliedTeamsArr.push(receiverDB[0].teamName)
-                console.log('updateData')
+                
                 //update the teamName array
                 await updateData(mongoClient, 
                     {
@@ -70,14 +70,6 @@ module.exports = {
                     })
             }
 
-            //if it is in the database appliedTeam array
-            else if (appliedTeam) {
-                interaction.reply({
-                    content: "You cannot apply more than once!",
-                    ephemeral: true
-                })
-                return;
-            }
 
 
         }
@@ -102,13 +94,13 @@ module.exports = {
 
         const row = new ActionRowBuilder()
             .addComponents(new ButtonBuilder()
-                .setCustomId("acceptButton")
+                .setCustomId(`applyAccept.${interaction.user.id}`)
                 .setLabel("Accept")
                 .setEmoji("✅")
                 .setStyle(ButtonStyle.Primary)
             )
             .addComponents(new ButtonBuilder()
-                .setCustomId("rejectButton")
+                .setCustomId(`applyReject.${interaction.user.id}`)
                 .setLabel("Reject")
                 .setEmoji("❌")
                 .setStyle(ButtonStyle.Secondary)
