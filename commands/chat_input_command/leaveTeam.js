@@ -27,7 +27,8 @@ module.exports = {
         let leavingMember = (await readData(mongoClient, { "userID": interaction.user.id }));
         leavingMember = leavingMember.length !== 0 ? leavingMember[0] : null;
         const isAdminUser = leavingMember ? leavingMember.isAdmin : null;
-        const admin = (await readData(mongoClient, { "teamName": leavingMember.teamName, "isAdmin": true }))[0];
+        let admin = (await readData(mongoClient, { "teamName": leavingMember.teamName, "isAdmin": true }))[0];
+        
         let row;
 
         //  checks if the interacted user is in ay particular team
@@ -66,6 +67,7 @@ module.exports = {
             //  making one member the team's admin randomly
             const newAdmin = members[0];
             newAdmin.isAdmin = true;
+            admin = newAdmin;
             await updateData(mongoClient, { "userID": newAdmin.userID }, { "isAdmin": true });
             const newAdminMember = await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(newAdmin.userID);
 
@@ -140,18 +142,23 @@ module.exports = {
             .setThumbnail("https://media.istockphoto.com/vectors/agreement-color-line-icon-documentation-status-linear-vector-request-vector-id1271490971?k=20&m=1271490971&s=612x612&w=0&h=AuGYSNj2B9lBBFWZ4CWaI39-VXxYE_b4EMzsbLR8OC4=")
             .setColor("Random");
 
-        const adminMember = await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(admin.userID);
+        members.forEach(async member => {
 
-        await adminMember.send({
-            embeds: [embed]
-        }).then(async () => {
-
-            await interaction.editReply({
-                content: "You've succesfully left your team!",
-                ephemeral: true
+            const guildMember = await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(member.userID);
+            await guildMember.send({
+                embeds: [embed]
             });
 
         });
+
+        await interaction.editReply({
+            content: "You've succesfully left your team!",
+            ephemeral: true
+        });
+
+        
+
+        
 
     }
 

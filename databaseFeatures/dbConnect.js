@@ -61,6 +61,11 @@ module.exports = async () => {
             appliedTeams: {
                 type: Array,
                 required: false
+            },
+
+            teamCustomID:{
+                type: String,
+                required: false
             }
             
         });
