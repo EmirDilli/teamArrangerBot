@@ -43,8 +43,9 @@ module.exports = {
                 "teamDescription": null,
                 "teamEmbedID": null,
                 "appliedTeams": [
-                    receiverDB[0].teamName
-                ]
+                    receiverDB[0].teamCustomID
+                ],
+                "teamCustomID": null
             })
         }
 
@@ -52,13 +53,14 @@ module.exports = {
         else if (applierDB.length !== 0) {
 
             //variable to check if the variable is in the database appliedTeam array
-            const appliedTeam = applierDB[0].appliedTeams.find(element => element === receiverDB[0].teamName)
-            
+            const teamCustomID = applierDB[0].appliedTeams.find(element => element === receiverDB[0].teamCustomID)
+            console.log(teamCustomID)
             
             //if it is not in the database
-            if (!appliedTeam) {
+            if (!teamCustomID) {
                 let appliedTeamsArr = applierDB[0].appliedTeams
-                appliedTeamsArr.push(receiverDB[0].teamName)
+                appliedTeamsArr.push(receiverDB[0].teamCustomID)
+                
                 
                 //update the teamName array
                 await updateData(mongoClient, 
@@ -75,7 +77,7 @@ module.exports = {
 
 
        
-        const textInput = (await interaction.fields.getTextInputValue('infoMessage')) ? await interaction.fields.getTextInputValue('infoMessage') : "";
+        const textInput = (interaction.fields.getTextInputValue('infoMessage')) ? interaction.fields.getTextInputValue('infoMessage') : "";
         
         
 

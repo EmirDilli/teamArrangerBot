@@ -37,12 +37,31 @@ module.exports = {
 
             return;
         }
+        //if it is in the database
+        if (applierDB.length !== 0) {
 
+            //variable to check if the variable is in the database appliedTeam array
+            const appliedTeam = applierDB[0].appliedTeams.find(element => element === receiverDB[0].teamCustomID)
+            
+            console.log(appliedTeam);
+            
+
+            //if it is in the database appliedTeam array
+            if (appliedTeam) {
+                interaction.reply({
+                    content: "You cannot apply more than once!",
+                    ephemeral: true
+                })
+                return;
+            }
+
+
+        }
         //  check if the interacted user is already in a team
         if (applierDB.length != 0 && applierDB[0].teamName != null) {
 
             interaction.reply({
-                content: "You already seem to be in another team! If you still want to apply to this team, you should leave your current team first.",
+                content: "You already seem to be in a team!",
                 ephemeral: true
             });
 
@@ -61,26 +80,7 @@ module.exports = {
         }
 
 
-        //if it is in the database
-        if (applierDB.length !== 0) {
-
-            //variable to check if the variable is in the database appliedTeam array
-            const appliedTeam = applierDB[0].appliedTeams.find(element => element === receiverDB[0].teamName)
-            
-            console.log(appliedTeam);
-            
-
-            //if it is in the database appliedTeam array
-            if (appliedTeam) {
-                interaction.reply({
-                    content: "You cannot apply more than once!",
-                    ephemeral: true
-                })
-                return;
-            }
-
-
-        }
+        
 
 
         const modal = new discord.ModalBuilder()

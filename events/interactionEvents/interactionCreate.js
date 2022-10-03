@@ -9,7 +9,8 @@ const { customize_team } = require("../../commands/chat_input_command/customizeT
 const { leaveTeam } = require("../../commands/chat_input_command/leaveTeam.js");
 const { applyTeamButton } = require("../../features/teamApplyButton");
 const { applyTeamModal } = require("../../features/teamApplyModal");
-const { readData } = require("../../databaseFeatures/dbReadData.js");
+const { invitationAccept } = require("../../features/inviteAccept")
+const { invitationaReject } = require("../../features/inviteReject")
 const { inviteAccept } = require("../../features/applicationAccept.js");
 
 const { kickMemberModal } = require("../../features/kickMemberModal")
@@ -68,10 +69,15 @@ module.exports = {
                 }
 
                 if (interaction.customId.startsWith("teamApply")) {
-                    applyTeamButton(interaction,mongoClient,client)
+                    await applyTeamButton(interaction,mongoClient,client);
 
                 }
-
+                if(interaction.customId.startsWith("acceptButton")){
+                    await invitationAccept(interaction, mongoClient, client);
+                }
+                if(interaction.customId.startsWith("rejectButton")){
+                    await inviteReject(interaction, mongoClient, client);
+                }
             }
 
             if(interaction.isModalSubmit()){
@@ -79,7 +85,7 @@ module.exports = {
                     applyTeamModal(interaction,mongoClient,client);
                 }
                 else if(interaction.customId.startsWith("kickReason")){
-                    kickMember(interaction,mongoClient,client)
+                    kickMember(interaction,mongoClient,client);
                 }
             }
 

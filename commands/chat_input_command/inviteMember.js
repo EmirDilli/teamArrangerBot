@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, CommandInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
 const discord = require("discord.js");
 const { readData } = require("../../databaseFeatures/dbReadData");
+const { addData } = require("../../databaseFeatures/dbAddUser")
 const mongoose = require("mongoose");
 
 require("dotenv").config();
@@ -51,7 +52,7 @@ module.exports = {
             });
             return;
         }
-
+        console.log((await readData(mongoClient, {"userID" : invited_user.id})))
         //  checking if the invited user has already a team
         if ((await readData(mongoClient, {"userID" : invited_user.id})).length !== 0) {
 
@@ -82,18 +83,31 @@ module.exports = {
 
         const row = new ActionRowBuilder()
             .addComponents(new ButtonBuilder()
-                .setCustomId("acceptButton")
+                .setCustomId(`acceptButton.${adminUser.teamCustomID}.${invited_user.id}`)
                 .setLabel("Accept")
                 .setEmoji("✅")
                 .setStyle(ButtonStyle.Primary)
             )
             .addComponents(new ButtonBuilder()
-                .setCustomId("rejectButton")
+                .setCustomId(`rejectButton.${adminUser.teamCustomID}.${invited_user.id}`)
                 .setLabel("Reject")
                 .setEmoji("❌")
                 .setStyle(ButtonStyle.Secondary)
             );
 
+            await addData(mongoClient, {
+                "userID": invited_user.id,
+                "userName": interaction.options.get("invite_member").member.nickname  ? interaction.options.get("invite_member").member.nickname : invited_user.username,
+                "teamName": null,
+                "isAdmin": false,
+                "teamColor": null,
+                "teamLogo": null,
+                "teamDescription": null,
+                "teamEmbedID": null,
+                "appliedTeams": [],
+                "teamCustomID": null
+            })
+        
         invited_user.send({
             embeds: [embed],
             components: [row]

@@ -34,8 +34,7 @@ const client = new discord.Client({
         IntentsBitField.Flags.Guilds,
         IntentsBitField.Flags.DirectMessages,
         IntentsBitField.Flags.DirectMessageTyping
-
-    ]
+    ]   
 });
 
 

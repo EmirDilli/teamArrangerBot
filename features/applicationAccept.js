@@ -67,6 +67,7 @@ module.exports = {
         let teamDescription = adminUser.teamDescription;
         let teamLogo = adminUser.teamLogo;
         let teamEmbedID = adminUser.teamEmbedID;
+        let teamCustomID = adminUser.teamCustomID;
 
         //  constructing the database and embed messages
         if ((await readData(mongoClient, { "userID": acceptedUserID }).length !== 0)) {
@@ -91,7 +92,8 @@ module.exports = {
                 "teamDescription": teamDescription,
                 "teamLogo": teamLogo,
                 "teamEmbedID": teamEmbedID,
-                "appliedTeams": []
+                "appliedTeams": [],
+                "teamCustomID": teamCustomID
 
             })
                 .then(async () => {

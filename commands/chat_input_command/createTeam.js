@@ -94,7 +94,8 @@ module.exports = {
             "teamColor": (teamColor),
             "teamLogo": (teamLogo),
             "teamDescription": (teamDescription),
-            "teamEmbedID": null
+            "teamEmbedID": null,
+            "teamCustomID": interaction.user.id
         }
 
         let members;
@@ -111,7 +112,7 @@ module.exports = {
                     .setStyle(ButtonStyle.Success)
             );
 
-        const teamAdminRole = await client.guilds.cache.get(process.env.GUILD_ID).roles.cache.get(process.env.ADMIN_ROLE_ID);
+        const teamAdminRole = client.guilds.cache.get(process.env.GUILD_ID).roles.cache.get(process.env.ADMIN_ROLE_ID);
 
         await interaction.member.roles.add(process.env.ADMIN_ROLE_ID);
 

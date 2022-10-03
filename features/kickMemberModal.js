@@ -1,10 +1,7 @@
 const discord = require("discord.js");
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, Client } = require("discord.js");
 const { readData } = require("../databaseFeatures/dbReadData.js");
-const { addData } = require("../databaseFeatures/dbAddUser.js");
-const { updateData } = require("../databaseFeatures/dbUpdateUser");
 const mongoose = require("mongoose");
-const { kickMember } = require("../commands/chat_input_command/kickMember")
 require("dotenv").config();
 
 module.exports = {
@@ -41,7 +38,7 @@ module.exports = {
             });
             return;
         }
-        
+        console.log((await readData(mongoClient, {"userID" : kicked_member.user.id}))[0])
         //  checks if the selected user is in the admin's team
         const kickedMemberTeam = (await readData(mongoClient, {"userID" : kicked_member.user.id}))[0].teamName;
 
