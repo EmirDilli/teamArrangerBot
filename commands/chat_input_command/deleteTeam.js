@@ -1,4 +1,4 @@
-const { SlashCommandBuilder , CommandInteraction, Client} = require("discord.js");
+const { SlashCommandBuilder , CommandInteraction, Client , EmbedBuilder} = require("discord.js");
 const discord = require("discord.js");
 const mongoose = require("mongoose");
 const {readData} = require("../../databaseFeatures/dbReadData.js");
@@ -61,6 +61,13 @@ module.exports = {
         await embedMsg.delete();
 
         //  finds all the team members and sends them an information message from dm
+
+        const embed = new EmbedBuilder()
+            .setTitle(`${adminUser.teamName} Has Been Deleted!`)
+            .setDescription(`${interaction.member} has deleted the ${adminUser.teamName} team. Therefore, you're not a part of this team anymore. You can look for other teams on the server.`)
+            .setThumbnail(process.env.DELETE_THUMBNAIL)
+            .setColor("Random");
+
         const allTeamMembers = (await readData(mongoClient, {"teamName" : adminUser.teamName}));
 
         allTeamMembers.forEach(async (user) => {
@@ -73,7 +80,7 @@ module.exports = {
                     await teamMember.roles.remove(process.env.MEMBER_ROLE_ID);
 
                     teamMember.send({
-                        content: `${interaction.member} has deleted the ${user.teamName} team. Therefore, you're not a part of this team anymore. You can look for other teams on the server.`
+                        embeds: [embed]
                     });
                 }
             }

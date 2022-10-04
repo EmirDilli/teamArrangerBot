@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, CommandInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle , Client} = require("discord.js");
+const { SlashCommandBuilder, CommandInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle , Client, ModalSubmitInteraction} = require("discord.js");
 const discord = require("discord.js");
 const { readData } = require("../../databaseFeatures/dbReadData.js");
 const {deleteData} = require("../../databaseFeatures/dbDeleteUser.js");
@@ -21,7 +21,7 @@ module.exports = {
 
     /**
      * 
-     * @param {discord.ModalSubmitInteraction} interaction 
+     * @param {ModalSubmitInteraction} interaction 
      * @param {mongoose.Model} mongoClient 
      * @param {Client} client 
      */
@@ -45,7 +45,7 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setTitle("You've been Kicked From Your Team!")
             .setDescription(`You've been kicked from your team, you can find for other teams if you would like to!`)
-            .setThumbnail("https://media.istockphoto.com/vectors/agreement-color-line-icon-documentation-status-linear-vector-request-vector-id1271490971?k=20&m=1271490971&s=612x612&w=0&h=AuGYSNj2B9lBBFWZ4CWaI39-VXxYE_b4EMzsbLR8OC4=")
+            .setThumbnail(process.env.KICK_THUMBNAIL)
             .setColor("Random")
             .addFields({
                 name: "Reason To Kick",

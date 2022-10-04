@@ -8,18 +8,28 @@ require("dotenv").config();
 
 
 module.exports = {
+
     /** 
     * @param {ButtonInteraction} interaction 
     * @param {mongoose.Model} mongoClient 
     * @param {Client} client 
     */
+
     async invitationAccept(interaction, mongoClient, client) {
+
         interaction.deferReply({
             ephemeral: true
         });
+
         //  getting the accepted user
         const teamID = interaction.customId.split(".")[1];
-        const team = readData(mongoClient, { "teamCustomID": teamID });
+
+        let admin;
+
+        const team = await readData(mongoClient, { "teamCustomID": teamID }).then(datas => datas.find(data => {
+            if (data.isAdmin === true) admin = data;
+        }));
+
         const acceptedUserID = interaction.customId.split(".")[2];
 
 
@@ -33,8 +43,11 @@ module.exports = {
                 return;
 
             });
-        console.log((await readData(mongoClient, {"teamCustomID": teamID})).length)
+
+
+        //  check if the specific team is present at that moment
         if((await readData(mongoClient, {"teamCustomID": teamID})).length === 0){
+
             interaction.editReply({
                 content: "The team you want to join does not exist anymore!",
                 ephemeral: true
@@ -66,11 +79,8 @@ module.exports = {
 
             return;
         }
-        let admin;
-        await team.then(datas => datas.find(data => {
-            if (data.isAdmin === true) admin = data;
-        }))
-        const adminUser = await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(admin.userID)
+
+        const adminUser = await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(admin.userID);
 
         let teamName = admin.teamName;
         let teamColor = admin.teamColor;
@@ -165,9 +175,19 @@ module.exports = {
             }
             
         }
+
+        //  sending notification to the admin user
+        const joinedMember = (await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(acceptedUserID));
+
+        const embed = new EmbedBuilder()
+            .setTitle("A Member Has Joined Your Team!")
+            .setDescription(`${joinedMember} joined your team!`)
+            .setThumbnail("https://media.istockphoto.com/vectors/agreement-color-line-icon-documentation-status-linear-vector-request-vector-id1271490971?k=20&m=1271490971&s=612x612&w=0&h=AuGYSNj2B9lBBFWZ4CWaI39-VXxYE_b4EMzsbLR8OC4=")
+            .setColor("Random");
+
         adminUser.send({
-            content: `${(await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(acceptedUserID))} joined your team!`,
-            ephemeral: true
-        })
+            embeds: [embed]
+        });
+
     }
 }
