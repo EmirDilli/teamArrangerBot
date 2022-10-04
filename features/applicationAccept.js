@@ -15,7 +15,7 @@ module.exports = {
      * @param {Client} client 
      */
 
-    async inviteAccept(interaction, mongoClient, client) {
+    async applicationAccept(interaction, mongoClient, client) {
 
         interaction.deferReply({
             ephemeral: true
