@@ -11,7 +11,9 @@ module.exports = {
     * @param {mongoose.Model} mongoClient 
     * @param {Client} client 
     */
-    async invitationReject(interaction, mongoClient, client){ 
 
+    async invitationReject(interaction, mongoClient, client){ 
+        
     }
+
 }

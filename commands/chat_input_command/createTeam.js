@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const { addData } = require("../../databaseFeatures/dbAddUser.js");
 const { updateData } = require("../../databaseFeatures/dbUpdateUser.js");
 const {embedBuilder} = require("../../features/embedTeamBuilder.js");
+const { deleteData } = require("../../databaseFeatures/dbDeleteUser");
 
 require("dotenv").config();
 
@@ -53,19 +54,24 @@ module.exports = {
 
     async  createTeam(interaction, mongoClient, client) {
 
-        interaction.deferReply({
+        await interaction.deferReply({
             ephemeral: true
         });
 
         // checking if the interacted user is already in a team
         if ((await readData(mongoClient, { "userID": interaction.user.id })).length !== 0) {
 
-            interaction.editReply({
-                content: "You are already in a team. If you want to create a new team, you should leave your current team.",
-                ephemeral: true
-            });
+            if((await readData(mongoClient, { "userID": interaction.user.id }))[0].teamCustomID !== null){
 
-            return;
+                interaction.editReply({
+                    content: "You are already in a team. If you want to create a new team, you should leave your current team.",
+                    ephemeral: true
+                });
+    
+                return;
+            }
+
+            await deleteData(mongoClient, {"userID": interaction.user.id});
         }
 
         const teamName = interaction.options.get("team_name").value;
