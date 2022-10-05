@@ -179,6 +179,8 @@ module.exports = {
         //  sending notification to the admin user
         const joinedMember = (await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(acceptedUserID));
 
+        await interaction.message.delete();
+
         const embed = new EmbedBuilder()
             .setTitle("A Member Has Joined Your Team!")
             .setDescription(`${joinedMember} joined your team!`)

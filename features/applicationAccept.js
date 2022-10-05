@@ -143,6 +143,8 @@ module.exports = {
 
             await acceptedUser.roles.add(process.env.MEMBER_ROLE_ID);
 
+            await interaction.message.delete();
+
             interaction.editReply({
                 content: "You've added this team member successfully!",
                 ephemeral: true
