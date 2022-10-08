@@ -47,7 +47,7 @@ module.exports = {
                 ],
                 "teamCustomID": null,
                 "teamChannelID": null,
-                "inviteUserArr": null
+                "inviteUserArr": []
             })
         }
 

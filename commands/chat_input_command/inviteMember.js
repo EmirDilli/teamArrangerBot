@@ -25,7 +25,7 @@ module.exports = {
 
     async inviteMember(interaction, mongoClient) {
 
-        interaction.deferReply({
+        await interaction.deferReply({
             ephemeral: true
         });
 
@@ -33,15 +33,16 @@ module.exports = {
         const adminUser = (await readData(mongoClient, {"userID" : interaction.user.id}))[0];
         const isAdminUser = adminUser ? adminUser.isAdmin : null;
             
-        const isInvited = false;
+        let isInvited = false;
         adminUser.inviteUserArr.forEach(element => {
-            if(element.id === invited_user.id) {
+            if(element === invited_user.id) {
+                
                 isInvited = true;
             }
-        });
-
+        })
+        console.log(isInvited)
         if(isInvited){
-            interaction.editReply({
+            await interaction.editReply({
                 content: "You cannot invite the user more than once!",
                 ephemeral: true
             })
@@ -127,13 +128,13 @@ module.exports = {
                 "appliedTeams": [],
                 "teamCustomID": null,
                 "teamChannelID": null,
-                "inviteUserArr": null
+                "inviteUserArr": []
             })
         
         
         const inviteArr = adminUser.inviteUserArr;
         inviteArr.push(invited_user.id)
-        await updateData(mongoClient, {"userID": adminUser.id},{
+        await updateData(mongoClient, {"userID": adminUser.userID},{
             "inviteUserArr": inviteArr
         })
 

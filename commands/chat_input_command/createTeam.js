@@ -102,9 +102,9 @@ module.exports = {
             "teamDescription": (teamDescription),
             "teamEmbedID": null,
             "teamCustomID": interaction.user.id,
-            "appliedTeams": null,
+            "appliedTeams": [],
             "teamChannelID": null,
-            "inviteUserArr": null
+            "inviteUserArr": []
         }
 
         let members;
