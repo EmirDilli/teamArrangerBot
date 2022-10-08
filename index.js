@@ -2,7 +2,7 @@
 const discord = require("discord.js");
 
 const dotenv = require("dotenv");
-const { IntentsBitField } = discord;
+const { IntentsBitField  , Partials} = discord;
 const eventHandler = require("./events/eventHandler.js");
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord.js");
@@ -34,7 +34,11 @@ const client = new discord.Client({
         IntentsBitField.Flags.Guilds,
         IntentsBitField.Flags.DirectMessages,
         IntentsBitField.Flags.DirectMessageTyping
-    ]   
+    ],
+
+    partials: [
+        Partials.Channel
+    ]
 });
 
 

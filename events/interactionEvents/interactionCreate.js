@@ -7,11 +7,13 @@ const { deleteTeam } = require("../../commands/chat_input_command/deleteTeam.js"
 const { kickMember } = require("../../commands/chat_input_command/kickMember.js");
 const { customize_team } = require("../../commands/chat_input_command/customizeTeam.js");
 const { leaveTeam } = require("../../commands/chat_input_command/leaveTeam.js");
+
 const { applyTeamButton } = require("../../features/teamApplyButton");
 const { applyTeamModal } = require("../../features/teamApplyModal");
 const { invitationAccept } = require("../../features/inviteAccept")
-const { invitationaReject } = require("../../features/inviteReject")
-const { inviteAccept } = require("../../features/applicationAccept.js");
+const { invitationReject } = require("../../features/inviteReject")
+const { applicationAccept } = require("../../features/applicationAccept.js");
+const { applicationReject } = require("../../features/applicationReject.js");
 
 const { kickMemberModal } = require("../../features/kickMemberModal")
 
@@ -35,6 +37,7 @@ module.exports = {
         // collects every slash command script into an object
         client.on("interactionCreate", async (interaction) => {
 
+            //  checks whether interaction is command
             if (interaction.isCommand()) {
 
                 if (interaction.commandName === "invite_member") {
@@ -64,7 +67,10 @@ module.exports = {
                 
                 if(interaction.customId.startsWith("apply")){
                     if(interaction.customId.startsWith("applyAccept")){
-                        await inviteAccept(interaction, mongoClient, client);
+                        await applicationAccept(interaction, mongoClient, client);
+                    }
+                    if(interaction.customId.startsWith("applyReject")){
+                        await applicationReject(interaction, mongoClient, client);
                     }
                 }
 
@@ -80,6 +86,7 @@ module.exports = {
                 }
             }
 
+            //  checks whether interaction is modal submit
             if(interaction.isModalSubmit()){
                 if(interaction.customId.startsWith("userInfo")){
                     applyTeamModal(interaction,mongoClient,client);

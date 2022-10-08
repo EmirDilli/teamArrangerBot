@@ -1,5 +1,5 @@
 const discord = require("discord.js");
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, Client } = require("discord.js");
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, Client , ChannelType} = require("discord.js");
 const { readData } = require("../databaseFeatures/dbReadData.js");
 const { updateData } = require("../databaseFeatures/dbUpdateUser.js");
 const mongoose = require("mongoose");
@@ -15,7 +15,7 @@ module.exports = {
      * @param {Client} client 
      */
 
-    async inviteAccept(interaction, mongoClient, client) {
+    async applicationAccept(interaction, mongoClient, client) {
 
         interaction.deferReply({
             ephemeral: true
@@ -115,6 +115,14 @@ module.exports = {
                     
                 });
 
+            //  adding member to the private team channel
+
+            const teamChannelID = adminUser.teamChannelID;
+            const teamChannel = await client.guilds.cache.get(process.env.GUILD_ID).channels.fetch(teamChannelID);
+            teamChannel.permissionOverwrites.create(acceptedUser.id , {ViewChannel: true});
+
+            await updateData(mongoClient, {"userID": acceptedUserID} , {"teamChannelID": teamChannelID});
+
         //  deciding whether Apply button
         if(members.length < 3){
 
@@ -143,6 +151,9 @@ module.exports = {
 
             await acceptedUser.roles.add(process.env.MEMBER_ROLE_ID);
 
+            await interaction.message.delete();
+
+            //  replying to the interaction
             interaction.editReply({
                 content: "You've added this team member successfully!",
                 ephemeral: true

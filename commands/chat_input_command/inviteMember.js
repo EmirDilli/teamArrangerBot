@@ -78,7 +78,7 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setTitle("Team Invitation To You")
             .setDescription(`${interaction.user} from the Algo Teams invites you to his/her team. If you're interested you can accept this offer!`)
-            .setThumbnail("https://media.istockphoto.com/vectors/agreement-color-line-icon-documentation-status-linear-vector-request-vector-id1271490971?k=20&m=1271490971&s=612x612&w=0&h=AuGYSNj2B9lBBFWZ4CWaI39-VXxYE_b4EMzsbLR8OC4=")
+            .setThumbnail(process.env.INVITE_THUMBNAIL)
             .setColor("Random");
 
         const row = new ActionRowBuilder()
@@ -105,7 +105,8 @@ module.exports = {
                 "teamDescription": null,
                 "teamEmbedID": null,
                 "appliedTeams": [],
-                "teamCustomID": null
+                "teamCustomID": null,
+                "teamChannelID": null
             })
         
         invited_user.send({
