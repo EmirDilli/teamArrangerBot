@@ -115,6 +115,14 @@ module.exports = {
                     
                 });
 
+            //  adding member to the private team channel
+
+            const teamChannelID = adminUser.teamChannelID;
+            const teamChannel = await client.guilds.cache.get(process.env.GUILD_ID).channels.fetch(teamChannelID);
+            teamChannel.permissionOverwrites.create(acceptedUser.id , {ViewChannel: true});
+
+            await updateData(mongoClient, {"userID": acceptedUserID} , {"teamChannelID": teamChannelID});
+
         //  deciding whether Apply button
         if(members.length < 3){
 
@@ -144,12 +152,6 @@ module.exports = {
             await acceptedUser.roles.add(process.env.MEMBER_ROLE_ID);
 
             await interaction.message.delete();
-
-            //  adding member to the private team channel
-            const teamChannelID = (await readData(mongoClient, {"userID": acceptedUser.id})).teamChannelID;
-            const teamChannel = await client.guilds.cache.get(process.env.GUILD_ID).channels.fetch(teamChannelID);
-
-            teamChannel.permissionOverwrites.create(acceptedUser.id , {ViewChannel: true});
 
             //  replying to the interaction
             interaction.editReply({

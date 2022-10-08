@@ -270,7 +270,7 @@ module.exports = {
         }
 
         //  leaving member from the private team channel
-        const teamChannelID = (await readData(mongoClient, {"userID": leavingMember.userID})).teamChannelID;
+        const teamChannelID = leavingMember.teamChannelID;
         const teamChannel = await client.guilds.cache.get(process.env.GUILD_ID).channels.fetch(teamChannelID);
 
         teamChannel.permissionOverwrites.edit(leavingMember.userID , {ViewChannel: false});

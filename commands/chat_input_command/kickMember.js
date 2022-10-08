@@ -82,7 +82,7 @@ module.exports = {
             }
 
             //  kicking member from the private team channel
-            const teamChannelID = (await readData(mongoClient, {"userID": kicked_member.id})).teamChannelID;
+            const teamChannelID = (await readData(mongoClient, {"userID": adminUser.userID})).teamChannelID;
             const teamChannel = await client.guilds.cache.get(process.env.GUILD_ID).channels.fetch(teamChannelID);
 
             teamChannel.permissionOverwrites.edit(kicked_member.id , {ViewChannel: false});
@@ -98,7 +98,7 @@ module.exports = {
             await interaction.editReply({
                 content: "Error occured while kicking the member",
                 ephemeral: true
-            })
+            });
         });
 
     }

@@ -177,7 +177,7 @@ module.exports = {
         }
 
         //  adding member to the private team channel
-        const teamChannelID = (await readData(mongoClient, {"userID": acceptedUserID})).teamChannelID;
+        const teamChannelID = (await readData(mongoClient, {"userID": adminUser.id})).teamChannelID;
         const teamChannel = await client.guilds.cache.get(process.env.GUILD_ID).channels.fetch(teamChannelID);
 
         teamChannel.permissionOverwrites.create(acceptedUserID , {ViewChannel: true});
