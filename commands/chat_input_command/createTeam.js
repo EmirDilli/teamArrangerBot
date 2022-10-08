@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, CommandInteraction, EmbedBuilder, Client, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
+const { SlashCommandBuilder, CommandInteraction, EmbedBuilder, Client, ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType , PermissionsBitField} = require("discord.js");
 const discord = require("discord.js");
 const colors = require("../../constants/colors")
 const { readData } = require("../../databaseFeatures/dbReadData.js");
@@ -101,7 +101,9 @@ module.exports = {
             "teamLogo": (teamLogo),
             "teamDescription": (teamDescription),
             "teamEmbedID": null,
-            "teamCustomID": interaction.user.id
+            "teamCustomID": interaction.user.id,
+            "appliedTeams": null,
+            "teamChannelID": null
         }
 
         let members;
@@ -128,6 +130,20 @@ module.exports = {
         });
 
         await updateData(mongoClient, {"userID": interaction.user.id} , {"teamEmbedID": (msg.id)});
+
+        //  creating specific channel for this new team
+        await client.guilds.cache.get(process.env.GUILD_ID).channels.create({
+            name: teamName,
+            type: ChannelType.GuildText
+        })
+            .then(async (channel) => {
+                channel.setParent("1028019474324013149");
+                channel.permissionOverwrites.create(interaction.guild.id , {ViewChannel: false});
+                channel.permissionOverwrites.create(interaction.user.id , {ViewChannel: true});
+
+                await updateData(mongoClient, {"userID": interaction.user.id} , {"teamChannelID": channel.id});
+            });
+        
 
         interaction.editReply({
             content: "Your team has been succesfully created!",

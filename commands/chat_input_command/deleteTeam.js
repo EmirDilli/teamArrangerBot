@@ -60,6 +60,12 @@ module.exports = {
         
         await embedMsg.delete();
 
+        //  deleting the team channel
+        const teamChannelID = (await readData(mongoClient, {"userID": user.userName})).teamChannelID;
+        const teamChannel = await client.guilds.cache.get(process.env.GUILD_ID).channels.fetch(teamChannelID);
+
+        teamChannel.delete();
+
         //  finds all the team members and sends them an information message from dm
 
         const embed = new EmbedBuilder()
@@ -130,6 +136,12 @@ module.exports = {
         
         await embedMsg.delete();
 
+        //  deleting the team channel
+        const teamChannelID = (await readData(mongoClient, {"userID": user.userName})).teamChannelID;
+        const teamChannel = await client.guilds.cache.get(process.env.GUILD_ID).channels.fetch(teamChannelID);
+
+        teamChannel.delete();
+
         //  finds all the team members and sends them an information message from dm
 
         const embed = new EmbedBuilder()
@@ -143,6 +155,7 @@ module.exports = {
         allTeamMembers.forEach(async (user) => {
             
             //  finding other team members rather than admin
+
             if(user.userID !== adminUser.userID){
                 const teamMember = client.guilds.cache.get(process.env.GUILD_ID).members.cache.get(user.userID);
                 if(teamMember){

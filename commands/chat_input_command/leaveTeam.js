@@ -123,6 +123,12 @@ module.exports = {
             })
         }
 
+         //  adding member to the private team channel
+         const teamChannelID = (await readData(mongoClient, {"userID": leavingMember.userID})).teamChannelID;
+         const teamChannel = await client.guilds.cache.get(process.env.GUILD_ID).channels.fetch(teamChannelID);
+
+         teamChannel.permissionOverwrites.edit(leavingMember.userID , {ViewChannel: false});
+
         const embed = new EmbedBuilder()
             .setTitle("A Member Has Left Your Team")
             .setDescription(`${leavingMember.userName} has left your team!`)
@@ -262,6 +268,12 @@ module.exports = {
                 components: [row]
             })
         }
+
+        //  leaving member from the private team channel
+        const teamChannelID = (await readData(mongoClient, {"userID": leavingMember.userID})).teamChannelID;
+        const teamChannel = await client.guilds.cache.get(process.env.GUILD_ID).channels.fetch(teamChannelID);
+
+        teamChannel.permissionOverwrites.edit(leavingMember.userID , {ViewChannel: false});
 
         const embed = new EmbedBuilder()
             .setTitle("A Member Has Left Your Team")

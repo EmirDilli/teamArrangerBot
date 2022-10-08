@@ -66,6 +66,11 @@ module.exports = async () => {
             teamCustomID:{
                 type: String,
                 required: false
+            },
+
+            teamChannelID: {
+                type: String,
+                required: false
             }
             
         });

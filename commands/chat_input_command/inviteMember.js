@@ -105,7 +105,8 @@ module.exports = {
                 "teamDescription": null,
                 "teamEmbedID": null,
                 "appliedTeams": [],
-                "teamCustomID": null
+                "teamCustomID": null,
+                "teamChannelID": null
             })
         
         invited_user.send({

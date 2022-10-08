@@ -1,5 +1,5 @@
 const discord = require("discord.js");
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, Client } = require("discord.js");
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, Client , ChannelType} = require("discord.js");
 const { readData } = require("../databaseFeatures/dbReadData.js");
 const { updateData } = require("../databaseFeatures/dbUpdateUser.js");
 const mongoose = require("mongoose");
@@ -145,6 +145,13 @@ module.exports = {
 
             await interaction.message.delete();
 
+            //  adding member to the private team channel
+            const teamChannelID = (await readData(mongoClient, {"userID": acceptedUser.id})).teamChannelID;
+            const teamChannel = await client.guilds.cache.get(process.env.GUILD_ID).channels.fetch(teamChannelID);
+
+            teamChannel.permissionOverwrites.create(acceptedUser.id , {ViewChannel: true});
+
+            //  replying to the interaction
             interaction.editReply({
                 content: "You've added this team member successfully!",
                 ephemeral: true
