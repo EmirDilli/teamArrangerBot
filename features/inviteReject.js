@@ -42,6 +42,16 @@ module.exports = {
         await team.then(datas => datas.find(data => {
             if (data.isAdmin === true) admin = data;
         }))
+        admin.inviteUserArr.forEach(async element => {
+            if(element === acceptedUserID){
+                let arr = admin.inviteUserArr
+                let index = arr.indexOf(element);
+                arr.splice(index,1)
+                await updateData(mongoClient, {"userID": adminUser.userID}, {"inviteUserArr": arr})
+            }
+        });
+
+
         const adminUser = await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(admin.userID);
         
         adminUser.send({

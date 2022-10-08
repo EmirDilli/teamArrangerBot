@@ -71,6 +71,10 @@ module.exports = async () => {
             teamChannelID: {
                 type: String,
                 required: false
+            },
+            inviteUserArr: {
+                type: Array,
+                required: false
             }
             
         });

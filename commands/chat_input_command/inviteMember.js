@@ -3,6 +3,7 @@ const discord = require("discord.js");
 const { readData } = require("../../databaseFeatures/dbReadData");
 const { addData } = require("../../databaseFeatures/dbAddUser")
 const mongoose = require("mongoose");
+const { updateData } = require("../../databaseFeatures/dbUpdateUser");
 
 require("dotenv").config();
 
@@ -29,9 +30,23 @@ module.exports = {
         });
 
         const invited_user = interaction.options.get("invite_member").user;
-
         const adminUser = (await readData(mongoClient, {"userID" : interaction.user.id}))[0];
         const isAdminUser = adminUser ? adminUser.isAdmin : null;
+            
+        const isInvited = false;
+        adminUser.inviteUserArr.forEach(element => {
+            if(element.id === invited_user.id) {
+                isInvited = true;
+            }
+        });
+
+        if(isInvited){
+            interaction.editReply({
+                content: "You cannot invite the user more than once!",
+                ephemeral: true
+            })
+            return;
+        }
 
         //  checks if the interacted user is an admin in any particular team
         if(!isAdminUser){
@@ -52,7 +67,9 @@ module.exports = {
             });
             return;
         }
-        console.log((await readData(mongoClient, {"userID" : invited_user.id})))
+        
+
+
         //  checking if the invited user has already a team
         if ((await readData(mongoClient, {"userID" : invited_user.id})).length !== 0) {
 
@@ -62,6 +79,9 @@ module.exports = {
             });
             return;
         }
+
+
+
 
         //  checking if the capacity of the team is full
         const teamName = (await readData(mongoClient, {"userID" : interaction.user.id}))[0].teamName;
@@ -106,9 +126,17 @@ module.exports = {
                 "teamEmbedID": null,
                 "appliedTeams": [],
                 "teamCustomID": null,
-                "teamChannelID": null
+                "teamChannelID": null,
+                "inviteUserArr": null
             })
         
+        
+        const inviteArr = adminUser.inviteUserArr;
+        inviteArr.push(invited_user.id)
+        await updateData(mongoClient, {"userID": adminUser.id},{
+            "inviteUserArr": inviteArr
+        })
+
         invited_user.send({
             embeds: [embed],
             components: [row]

@@ -46,7 +46,8 @@ module.exports = {
                     receiverDB[0].teamCustomID
                 ],
                 "teamCustomID": null,
-                "teamChannelID": null
+                "teamChannelID": null,
+                "inviteUserArr": null
             })
         }
 

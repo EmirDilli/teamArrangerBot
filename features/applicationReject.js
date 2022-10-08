@@ -25,6 +25,15 @@ module.exports = {
         let appliedUser = (await readData(mongoClient, {"userID":appliedUserID}));
         let adminUser = (await readData(mongoClient, {"userID":interaction.user.id}));
 
+        appliedUser.appliedTeams.forEach(async element => {
+            if(element === adminUser.teamCustomID){
+                let arr = appliedUser.appliedTeams 
+                let index = arr.indexOf(element);
+                arr.splice(index,1)
+                await updateData(mongoClient, {"userID": adminUser.userID}, {"appliedTeams": arr})
+            }
+        });
+
         //  if user is not on the database
         if(appliedUser.length === 0){
 
