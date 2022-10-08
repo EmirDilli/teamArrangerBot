@@ -61,7 +61,7 @@ module.exports = {
         await embedMsg.delete();
 
         //  deleting the team channel
-        const teamChannelID = (await readData(mongoClient, {"userID": user.userName})).teamChannelID;
+        const teamChannelID = adminUser.teamChannelID;
         const teamChannel = await client.guilds.cache.get(process.env.GUILD_ID).channels.fetch(teamChannelID);
 
         teamChannel.delete();
@@ -80,7 +80,7 @@ module.exports = {
             
             //  finding other team members rather than admin
             if(user.userID !== adminUser.userID){
-                const teamMember = client.guilds.cache.get(process.env.GUILD_ID).members.cache.get(user.userID);
+                const teamMember = client.guilds.cache.get(process.env.GUILD_ID).members.fetch(user.userID);
                 if(teamMember){
                     await deleteData(mongoClient, {"userID" : user.userID});
                     await teamMember.roles.remove(process.env.MEMBER_ROLE_ID);
@@ -137,7 +137,7 @@ module.exports = {
         await embedMsg.delete();
 
         //  deleting the team channel
-        const teamChannelID = (await readData(mongoClient, {"userID": user.userName})).teamChannelID;
+        const teamChannelID = adminUser.teamChannelID;
         const teamChannel = await client.guilds.cache.get(process.env.GUILD_ID).channels.fetch(teamChannelID);
 
         teamChannel.delete();
