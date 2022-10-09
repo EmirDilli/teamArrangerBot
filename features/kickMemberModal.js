@@ -38,7 +38,17 @@ module.exports = {
             });
             return;
         }
-        console.log((await readData(mongoClient, {"userID" : kicked_member.user.id}))[0])
+
+        //  checks if the selected user is in the database
+        if((await readData(mongoClient, {"userID" : kicked_member.user.id})).length === 0){
+
+            interaction.reply({
+                content: "The user you want to kick, is not on your team!",
+                ephemeral: true
+            });
+            return;
+        }
+
         //  checks if the selected user is in the admin's team
         const kickedMemberTeam = (await readData(mongoClient, {"userID" : kicked_member.user.id}))[0].teamName;
 

@@ -24,9 +24,8 @@ module.exports = {
         const receiver = client.guilds.cache.get(process.env.GUILD_ID).members.cache.get(receiverID);
         const applierID = interaction.user.id;
 
-        const applierDB = await readData(mongoClient, { "userID": applierID});
+        const applierDB = await readData(mongoClient, { "userID": applierID} );
         
-       
         //  checks if the user has sent the application to itself
         if (applierID === receiverID) {
 
@@ -37,6 +36,18 @@ module.exports = {
 
             return;
         }
+
+        //  check if the interacted user is already in a team
+        if (applierDB.length != 0 && applierDB[0].teamName != null) {
+
+            interaction.reply({
+                content: "You already seem to be in a team!",
+                ephemeral: true
+            });
+
+            return;
+        }
+        
         //if it is in the database
         if (applierDB.length !== 0) {
 
@@ -56,16 +67,6 @@ module.exports = {
             }
 
 
-        }
-        //  check if the interacted user is already in a team
-        if (applierDB.length != 0 && applierDB[0].teamName != null) {
-
-            interaction.reply({
-                content: "You already seem to be in a team!",
-                ephemeral: true
-            });
-
-            return;
         }
 
         

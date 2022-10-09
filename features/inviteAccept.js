@@ -3,6 +3,7 @@ const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonIntera
 const { readData } = require("../databaseFeatures/dbReadData.js");
 const { addData } = require("../databaseFeatures/dbAddUser");
 const { updateData } = require("../databaseFeatures/dbUpdateUser")
+const {embedBuilder} = require("./embedTeamBuilder.js");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
@@ -24,11 +25,17 @@ module.exports = {
         //  getting the accepted user
         const teamID = interaction.customId.split(".")[1];
 
-        let admin;
+        let admin, team;
 
-        const team = await readData(mongoClient, { "teamCustomID": teamID }).then(datas => datas.find(data => {
-            if (data.isAdmin === true) admin = data;
-        }));
+        await readData(mongoClient, { "teamCustomID": teamID }).then(datas => {
+            
+            team = datas;
+            datas.find(data => {
+                console.log(data);
+                if (data.isAdmin === true) admin = data;
+        })
+    
+    });
 
         const acceptedUserID = interaction.customId.split(".")[2];
 
@@ -96,18 +103,9 @@ module.exports = {
         //  constructing the database and embed messages
         if ((await readData(mongoClient, { "userID": acceptedUserID }).length !== 0)) {
 
-            const embedMsg = new EmbedBuilder()
-                .setAuthor({ "name": teamName })
-                .setColor(teamColor)
-                .setDescription(teamDescription)
-                .setThumbnail(teamLogo)
-                .addFields({
-                    "name": "Admin",
-                    "value": `${await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(admin.userID)}`,
-                    "inline": true
-                });
 
-            let members;
+            let members = await readData(mongoClient, { "teamName": teamName });
+            members.add({"isAdmin": false , "userID": acceptedUserID});
 
             await updateData(mongoClient, { "userID": acceptedUserID }, {
 
@@ -119,25 +117,9 @@ module.exports = {
                 "appliedTeams": [],
                 "teamCustomID": teamCustomID
 
-            })
-                .then(async () => {
+            });
 
-                    members = await readData(mongoClient, { "teamName": teamName });
-                    members.forEach(async member => {
-
-                        if (!member.isAdmin) {
-
-                            embedMsg.addFields({
-                                "name": "Member",
-                                "value": `${(await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(member.userID))}`,
-                                "inline": true
-                            });
-
-                        }
-                    });
-
-
-                });
+            const embedMsg = embedBuilder(client, teamName, teamColor, teamDescription, teamLogo, members);
 
             //  deciding whether Apply button
             if (members.length < 3) {
@@ -176,11 +158,70 @@ module.exports = {
             
         }
 
+        else{
+            
+            let members = await readData(mongoClient, { "teamName": teamName });
+            members.add({"isAdmin": false , "userID": acceptedUserID});
+
+            await addData(mongoClient, {
+                "userID": acceptedUserID,
+                "userName": acceptedUser.nickname,
+                "teamName": teamName,
+                "teamColor": teamColor,
+                "teamDescription": teamDescription,
+                "teamLogo": teamLogo,
+                "teamEmbedID": teamEmbedID,
+                "appliedTeams": [],
+                "teamCustomID": teamCustomID,
+                "invitedUserArr": []
+
+            });
+
+            const embedMsg = embedBuilder(client, teamName, teamColor, teamDescription, teamLogo, members);
+
+            //  deciding whether Apply button
+            if (members.length < 3) {
+
+                const embedID = admin.teamEmbedID;
+                const embed = await client.guilds.cache.get(process.env.GUILD_ID).channels.cache.get(process.env.CHANNEL_ID).messages.fetch(embedID);
+                await embed.edit({
+                    embeds: [embedMsg]
+                });
+
+                await acceptedUser.roles.add(process.env.MEMBER_ROLE_ID);
+
+                await interaction.editReply({
+                    content: "Good job! You finally joined a team you pathetic rat!",
+                    ephemeral: true
+                });
+
+
+            }
+            else {
+
+                const embed = await client.guilds.cache.get(process.env.GUILD_ID).channels.cache.get(process.env.CHANNEL_ID).messages.fetch(teamEmbedID);
+                await embed.edit({
+                    embeds: [embedMsg],
+                    components: []
+                });
+
+                await acceptedUser.roles.add(process.env.MEMBER_ROLE_ID);
+
+                interaction.editReply({
+                    content: "Good job! You finally joined a team you pathetic rat!",
+                    ephemeral: true
+                });
+
+            }
+        }
+
         //  adding member to the private team channel
         const teamChannelID = (await readData(mongoClient, {"userID": adminUser.id})).teamChannelID;
-        const teamChannel = await client.guilds.cache.get(process.env.GUILD_ID).channels.fetch(teamChannelID);
-
-        teamChannel.permissionOverwrites.create(acceptedUserID , {ViewChannel: true});
+        await client.guilds.cache.get(process.env.GUILD_ID).channels.fetch(teamChannelID)
+            .then(async (channel) => {
+                console.log(channel.permissionOverwrites);
+                channel.permissionOverwrites.create(acceptedUserID , {ViewChannel: true});
+            });
 
         //  sending notification to the admin user
         const joinedMember = (await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(acceptedUserID));

@@ -40,7 +40,7 @@ module.exports = {
                 isInvited = true;
             }
         })
-        console.log(isInvited)
+
         if(isInvited){
             await interaction.editReply({
                 content: "You cannot invite the user more than once!",
@@ -74,11 +74,16 @@ module.exports = {
         //  checking if the invited user has already a team
         if ((await readData(mongoClient, {"userID" : invited_user.id})).length !== 0) {
 
-            interaction.editReply({
-                content: "This invited user is already in a team!",
-                ephemeral: true
-            });
-            return;
+            if((await readData(mongoClient, {"userID" : invited_user.id}))[0].teamName !== null){
+
+                interaction.editReply({
+                    content: "This invited user is already in a team!",
+                    ephemeral: true
+                });
+                return;
+
+            }
+            
         }
 
 
@@ -115,21 +120,6 @@ module.exports = {
                 .setEmoji("❌")
                 .setStyle(ButtonStyle.Secondary)
             );
-
-            await addData(mongoClient, {
-                "userID": invited_user.id,
-                "userName": interaction.options.get("invite_member").member.nickname  ? interaction.options.get("invite_member").member.nickname : invited_user.username,
-                "teamName": null,
-                "isAdmin": false,
-                "teamColor": null,
-                "teamLogo": null,
-                "teamDescription": null,
-                "teamEmbedID": null,
-                "appliedTeams": [],
-                "teamCustomID": null,
-                "teamChannelID": null,
-                "inviteUserArr": []
-            })
         
         
         const inviteArr = adminUser.inviteUserArr;

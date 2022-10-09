@@ -139,6 +139,7 @@ module.exports = {
         })
             .then(async (channel) => {
                 channel.setParent("1028019474324013149");
+                console.log(channel.permissionOverwrites);
                 channel.permissionOverwrites.create(interaction.guild.id , {ViewChannel: false});
                 channel.permissionOverwrites.create(interaction.user.id , {ViewChannel: true});
 
