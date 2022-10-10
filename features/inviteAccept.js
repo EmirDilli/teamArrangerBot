@@ -31,14 +31,12 @@ module.exports = {
             
             team = datas;
             datas.find(data => {
-                console.log(data);
                 if (data.isAdmin === true) admin = data;
         })
     
     });
 
         const acceptedUserID = interaction.customId.split(".")[2];
-
 
         const acceptedUser = await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(acceptedUserID)
             .catch(err => {
@@ -62,12 +60,12 @@ module.exports = {
             return;
         }
         //  check if accepted user is already in a team
-        if ((await readData(mongoClient, { "userID": acceptedUser.id })).length !== 0) {
+        if ((await readData(mongoClient, { "userID": acceptedUserID })).length !== 0) {
 
-            if ((await readData(mongoClient, { "userID": acceptedUser.id }))[0].teamName !== null) {
+            if ((await readData(mongoClient, { "userID": acceptedUserID }))[0].teamName !== null) {
 
                 interaction.editReply({
-                    content: "This invited user is already in a team!",
+                    content: "You are already in a team, u know that right?",
                     ephemeral: true
                 });
 
@@ -97,15 +95,22 @@ module.exports = {
         let teamCustomID = admin.teamCustomID;
 
 
-        
+        admin.inviteUserArr.forEach(async element => {
+            if(element === acceptedUserID){
+                let arr = admin.inviteUserArr
+                let index = arr.indexOf(element);
+                arr.splice(index,1)
+                await updateData(mongoClient, {"userID": adminUser.userID}, {"inviteUserArr": arr})
+            }
+        });
 
         
         //  constructing the database and embed messages
-        if ((await readData(mongoClient, { "userID": acceptedUserID }).length !== 0)) {
-
+        if ((await readData(mongoClient, { "userID": acceptedUserID })).length !== 0) {
+            console.log((await readData(mongoClient, { "userID": acceptedUserID })));
 
             let members = await readData(mongoClient, { "teamName": teamName });
-            members.add({"isAdmin": false , "userID": acceptedUserID});
+            members.push({"isAdmin": false , "userID": acceptedUserID});
 
             await updateData(mongoClient, { "userID": acceptedUserID }, {
 
@@ -119,7 +124,7 @@ module.exports = {
 
             });
 
-            const embedMsg = embedBuilder(client, teamName, teamColor, teamDescription, teamLogo, members);
+            const embedMsg = await embedBuilder(client, teamName, teamColor, teamDescription, teamLogo, members);
 
             //  deciding whether Apply button
             if (members.length < 3) {
@@ -161,23 +166,24 @@ module.exports = {
         else{
             
             let members = await readData(mongoClient, { "teamName": teamName });
-            members.add({"isAdmin": false , "userID": acceptedUserID});
+            members.push({"isAdmin": false , "userID": acceptedUserID});
 
             await addData(mongoClient, {
-                "userID": acceptedUserID,
-                "userName": acceptedUser.nickname,
+                "userID": interaction.user.id,
+                "userName": interaction.member ? interaction.member.nickname : interaction.user.username,
                 "teamName": teamName,
+                "isAdmin": false,
                 "teamColor": teamColor,
-                "teamDescription": teamDescription,
                 "teamLogo": teamLogo,
+                "teamDescription": teamDescription,
                 "teamEmbedID": teamEmbedID,
                 "appliedTeams": [],
                 "teamCustomID": teamCustomID,
-                "invitedUserArr": []
+                "teamChannelID": null,
+                "inviteUserArr": []
+            })
 
-            });
-
-            const embedMsg = embedBuilder(client, teamName, teamColor, teamDescription, teamLogo, members);
+            const embedMsg = await embedBuilder(client, teamName, teamColor, teamDescription, teamLogo, members);
 
             //  deciding whether Apply button
             if (members.length < 3) {
@@ -194,7 +200,6 @@ module.exports = {
                     content: "Good job! You finally joined a team you pathetic rat!",
                     ephemeral: true
                 });
-
 
             }
             else {
@@ -216,12 +221,14 @@ module.exports = {
         }
 
         //  adding member to the private team channel
-        const teamChannelID = (await readData(mongoClient, {"userID": adminUser.id})).teamChannelID;
-        await client.guilds.cache.get(process.env.GUILD_ID).channels.fetch(teamChannelID)
-            .then(async (channel) => {
-                console.log(channel.permissionOverwrites);
-                channel.permissionOverwrites.create(acceptedUserID , {ViewChannel: true});
-            });
+
+    
+
+        const teamChannelID = admin.teamChannelID;
+        const teamChannel = await client.guilds.cache.get(process.env.GUILD_ID).channels.fetch(teamChannelID);
+        await teamChannel.permissionOverwrites.create(acceptedUser.id , {ViewChannel: true});
+
+        await updateData(mongoClient, {"userID": acceptedUserID} , {"teamChannelID": teamChannelID});
 
         //  sending notification to the admin user
         const joinedMember = (await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(acceptedUserID));

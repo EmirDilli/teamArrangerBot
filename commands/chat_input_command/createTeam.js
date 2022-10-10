@@ -138,7 +138,7 @@ module.exports = {
             type: ChannelType.GuildText
         })
             .then(async (channel) => {
-                channel.setParent("1028019474324013149");
+                channel.setParent(process.env.TEXT_CHANNEL_CATEGORY);
                 console.log(channel.permissionOverwrites);
                 channel.permissionOverwrites.create(interaction.guild.id , {ViewChannel: false});
                 channel.permissionOverwrites.create(interaction.user.id , {ViewChannel: true});

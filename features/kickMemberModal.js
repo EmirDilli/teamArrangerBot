@@ -66,7 +66,7 @@ module.exports = {
 
         const modal = new discord.ModalBuilder()
             .setCustomId(`kickReason.${kicked_member.user.id}`)
-            .setTitle('User Info')
+            .setTitle('Reason To Kick')
             .setComponents(
                 new ActionRowBuilder()
                     .setComponents(

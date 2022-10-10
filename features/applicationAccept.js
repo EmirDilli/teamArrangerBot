@@ -17,7 +17,7 @@ module.exports = {
 
     async applicationAccept(interaction, mongoClient, client) {
 
-        interaction.deferReply({
+        await interaction.deferReply({
             ephemeral: true
         });
 
@@ -33,13 +33,14 @@ module.exports = {
                 return;
 
             });
+        const acceptedUserDB = (await readData(mongoClient, { "userID": acceptedUser.id }));
 
         //  check if accepted user is already in a team
-        if ((await readData(mongoClient, { "userID": acceptedUser.id })).length !== 0) {
+        if (acceptedUserDB.length !== 0) {
 
-            if ((await readData(mongoClient, { "userID": acceptedUser.id }))[0].teamName !== null) {
+            if (acceptedUserDB[0].teamName !== null) {
 
-                interaction.editReply({
+                await interaction.editReply({
                     content: "This invited user is already in a team!",
                     ephemeral: true
                 });
@@ -68,6 +69,17 @@ module.exports = {
         let teamLogo = adminUser.teamLogo;
         let teamEmbedID = adminUser.teamEmbedID;
         let teamCustomID = adminUser.teamCustomID;
+
+        //  removing this current team's ID from applied user's "appliedTeams" array
+        if(acceptedUserDB[0].appliedTeams.includes(adminUser.teamCustomID)){
+
+            let arr = acceptedUserDB[0].appliedTeams;
+            let index = arr.indexOf(adminUser.teamCustomID);
+            arr.splice(index,1);
+            await updateData(mongoClient, {"userID": acceptedUserDB.userID}, {"appliedTeams": arr});
+
+        }
+        
 
         //  constructing the database and embed messages
         if ((await readData(mongoClient, { "userID": acceptedUserID }).length !== 0)) {
@@ -134,6 +146,8 @@ module.exports = {
 
             await acceptedUser.roles.add(process.env.MEMBER_ROLE_ID);
 
+            await interaction.message.delete();
+
             await interaction.editReply({
                 content: "You've added this team member successfully!",
                 ephemeral: true
@@ -151,10 +165,11 @@ module.exports = {
 
             await acceptedUser.roles.add(process.env.MEMBER_ROLE_ID);
 
+            console.log(interaction.message);
             await interaction.message.delete();
 
             //  replying to the interaction
-            interaction.editReply({
+            await interaction.editReply({
                 content: "You've added this team member successfully!",
                 ephemeral: true
             });

@@ -82,7 +82,7 @@ module.exports = {
                     await invitationAccept(interaction, mongoClient, client);
                 }
                 if(interaction.customId.startsWith("rejectButton")){
-                    await invitationaReject(interaction, mongoClient, client);
+                    await invitationReject(interaction, mongoClient, client);
                 }
             }
 

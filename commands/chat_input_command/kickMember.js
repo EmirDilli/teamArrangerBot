@@ -27,7 +27,7 @@ module.exports = {
      */
     async kickMember(interaction, mongoClient, client){
 
-        interaction.deferReply({
+        await interaction.deferReply({
             ephemeral: true
         });
 
@@ -82,10 +82,10 @@ module.exports = {
             }
 
             //  kicking member from the private team channel
-            const teamChannelID = (await readData(mongoClient, {"userID": adminUser.userID})).teamChannelID;
+            const teamChannelID = adminUser.teamChannelID;
             const teamChannel = await client.guilds.cache.get(process.env.GUILD_ID).channels.fetch(teamChannelID);
 
-            teamChannel.permissionOverwrites.edit(kicked_member.id , {ViewChannel: false});
+            await teamChannel.permissionOverwrites.edit(kicked_member.id , {ViewChannel: false});
             
 
             await interaction.editReply({

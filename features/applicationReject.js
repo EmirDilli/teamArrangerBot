@@ -22,15 +22,15 @@ module.exports = {
         });
 
         const appliedUserID = interaction.customId.split(".")[1];
-        let appliedUser = (await readData(mongoClient, {"userID":appliedUserID}));
+        let appliedUser = (await readData(mongoClient, {"userID":appliedUserID}))[0];
         let adminUser = (await readData(mongoClient, {"userID":interaction.user.id}));
 
         appliedUser.appliedTeams.forEach(async element => {
             if(element === adminUser.teamCustomID){
-                let arr = appliedUser.appliedTeams 
+                let arr = appliedUser.appliedTeams;
                 let index = arr.indexOf(element);
-                arr.splice(index,1)
-                await updateData(mongoClient, {"userID": adminUser.userID}, {"appliedTeams": arr})
+                arr.splice(index,1);
+                await updateData(mongoClient, {"userID": appliedUser.userID}, {"appliedTeams": arr});
             }
         });
 
@@ -44,9 +44,6 @@ module.exports = {
             return;
 
         }
-
-        // since appliedUser is present, this present user is implemented to this variable
-        appliedUser = appliedUser[0];
 
         //  if user has already a team
         if(appliedUser.teamCustomID !== null){
@@ -95,6 +92,7 @@ module.exports = {
 
 
         }
+        
 
         const appliedUserMember = await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(appliedUserID)
             .then(async (member) => {
