@@ -20,7 +20,7 @@ module.exports = {
 
     async deleteTeam(interaction, mongoClient, client){
 
-        interaction.deferReply({
+        await interaction.deferReply({
             ephemeral: true
         });
 

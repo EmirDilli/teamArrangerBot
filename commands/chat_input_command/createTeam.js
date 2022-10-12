@@ -139,7 +139,6 @@ module.exports = {
         })
             .then(async (channel) => {
                 channel.setParent(process.env.TEXT_CHANNEL_CATEGORY);
-                console.log(channel.permissionOverwrites);
                 channel.permissionOverwrites.create(interaction.guild.id , {ViewChannel: false});
                 channel.permissionOverwrites.create(interaction.user.id , {ViewChannel: true});
 

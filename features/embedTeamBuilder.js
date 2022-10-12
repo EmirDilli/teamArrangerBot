@@ -1,6 +1,7 @@
 const discord = require("discord.js");
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, Client } = require("discord.js");
 const { readData } = require("../databaseFeatures/dbReadData.js");
+const { updateData } = require("../databaseFeatures/dbUpdateUser.js");
 const mongoose = require("mongoose");
 
 require("dotenv").config();
@@ -23,7 +24,6 @@ module.exports = {
         try {
             embedMsg.setThumbnail(teamLogo);
         } catch (error) {
-            
         }
 
         // adding team members to the embed message

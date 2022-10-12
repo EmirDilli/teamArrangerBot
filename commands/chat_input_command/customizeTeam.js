@@ -4,6 +4,7 @@ const colors = require("../../constants/colors");
 const mongoose = require("mongoose");
 const {readData} = require("../../databaseFeatures/dbReadData.js");
 const {updateData} = require("../../databaseFeatures/dbUpdateUser.js");
+const {embedBuilder} = require("../../features/embedTeamBuilder");
 
 require("dotenv").config();
 
@@ -47,7 +48,7 @@ module.exports = {
      */
     async customize_team(interaction, mongoClient, client){
 
-        interaction.deferReply({
+        await interaction.deferReply({
             ephemeral: true
         });
 
@@ -77,23 +78,15 @@ module.exports = {
 
         //  implementing the team's name to a variable!!!! important!
         let teamName = adminUser.teamName;
-        console.log(teamName);
+        let teamDescription = adminUser.teamDescription;
+        let teamColor = adminUser.teamColor;
+        let teamLogo = adminUser.teamLogo;
+
         //  getting customized data if they are individually present
         let newTeamName = interaction.options.get("customize_team_name") ? interaction.options.get("customize_team_name").value : null;
         let newTeamDescription = interaction.options.get("customize_team_description") ? interaction.options.get("customize_team_description").value : null;
         let newTeamColor = interaction.options.get("customize_team_color") ? interaction.options.get("customize_team_color").value : null;
         let newTeamLogo = interaction.options.get("customize_team_logo") ? interaction.options.get("customize_team_logo").value : null;
-
-        const embedMsg = new EmbedBuilder()
-            .setAuthor({ "name": teamName })
-            .setColor(adminUser.teamColor)
-            .setDescription(adminUser.teamDescription)
-            .setThumbnail(adminUser.teamLogo)
-            .addFields({
-                "name": "Admin",
-                "value": `${interaction.member}`,
-                "inline": true
-            });
 
         //  checking and customizing the given datas individually
 
@@ -110,8 +103,6 @@ module.exports = {
                 return;
             }
 
-            embedMsg.setAuthor({"name": newTeamName});
-
             await updateData(mongoClient, {"teamName" : teamName} , {"teamName" : newTeamName});
 
             teamName = newTeamName;
@@ -119,49 +110,33 @@ module.exports = {
         }
 
         if(newTeamColor){
-            
-            embedMsg.setColor(newTeamColor);
 
             await updateData(mongoClient, {"teamName" : teamName} , {"teamColor" : newTeamColor});
+
+            teamColor = newTeamColor;
 
         }
 
         if(newTeamLogo){
-            
-            try {
-                embedMsg.setThumbnail(newTeamLogo);
-            } catch (error) {
-                console.log(error);
-                newTeamLogo = null;
-            }
 
             await updateData(mongoClient, {"teamName" : teamName} , {"teamLogo" : newTeamLogo});
+
+            teamLogo = newTeamLogo;
 
         }
 
         if(newTeamDescription){
-            
-            embedMsg.setDescription(newTeamDescription);
 
             await updateData(mongoClient, {"teamName" : teamName} , {"teamDescription" : newTeamDescription});
+
+            teamDescription = newTeamDescription;
 
         }
 
         //  adding embed message, the non-admin members of the team
         const members = await readData(mongoClient, {"teamName" : teamName});
 
-        members.forEach(async member => {
-
-            if(!member.isAdmin){
-
-                embedMsg.addFields({
-                    "name": "Member",
-                    "value": await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(member.userID),
-                    "inline": true
-                });
-
-            }
-        });
+        const embedMsg = await embedBuilder(client, teamName, teamColor, teamDescription, teamLogo, members);
 
         //  deciding whether Apply button
         if(members.length < 3){
