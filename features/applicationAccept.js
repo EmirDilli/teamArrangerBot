@@ -2,6 +2,7 @@ const discord = require("discord.js");
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, Client , ChannelType} = require("discord.js");
 const { readData } = require("../databaseFeatures/dbReadData.js");
 const { updateData } = require("../databaseFeatures/dbUpdateUser.js");
+const {embedBuilder} = require("../features/embedTeamBuilder.js");
 const mongoose = require("mongoose");
 
 require("dotenv").config();
@@ -84,17 +85,6 @@ module.exports = {
         //  constructing the database and embed messages
         if ((await readData(mongoClient, { "userID": acceptedUserID }).length !== 0)) {
 
-            const embedMsg = new EmbedBuilder()
-                .setAuthor({ "name": teamName })
-                .setColor(teamColor)
-                .setDescription(teamDescription)
-                .setThumbnail(teamLogo)
-                .addFields({
-                    "name": "Admin",
-                    "value": `${await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(adminUser.userID)}`,
-                    "inline": true
-                });
-
             let members;
 
             await updateData(mongoClient, { "userID": acceptedUserID }, {
@@ -111,21 +101,10 @@ module.exports = {
                 .then(async () => {
 
                     members = await readData(mongoClient, { "teamName": teamName });
-                    members.forEach(async member => {
-
-                        if (!member.isAdmin) {
-
-                            embedMsg.addFields({
-                                "name": "Member",
-                                "value": `${(await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(member.userID))}`,
-                                "inline": true
-                            });
-
-                        }
-                    });
-
                     
                 });
+
+            const embedMsg = await embedBuilder(client, teamName, teamColor, teamDescription, teamLogo, members);
 
             //  adding member to the private team channel
 
