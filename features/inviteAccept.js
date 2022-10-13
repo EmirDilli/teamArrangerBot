@@ -18,7 +18,7 @@ module.exports = {
 
     async invitationAccept(interaction, mongoClient, client) {
 
-        interaction.deferReply({
+        await interaction.deferReply({
             ephemeral: true
         });
 
@@ -53,7 +53,7 @@ module.exports = {
         //  check if the specific team is present at that moment
         if((await readData(mongoClient, {"teamCustomID": teamID})).length === 0){
 
-            interaction.editReply({
+            await interaction.editReply({
                 content: "The team you want to join does not exist anymore!",
                 ephemeral: true
             })
@@ -77,7 +77,7 @@ module.exports = {
         //  checking if the capacity of the team is full
         if (team.length === 3) {
 
-            interaction.editReply({
+            await interaction.editReply({
                 content: "Your team has full capacity to invite another member!",
                 ephemeral: true
             });
@@ -154,7 +154,7 @@ module.exports = {
 
                 await acceptedUser.roles.add(process.env.MEMBER_ROLE_ID);
 
-                interaction.editReply({
+                await interaction.editReply({
                     content: "Good job! You finally joined a team you pathetic rat!",
                     ephemeral: true
                 });
@@ -212,7 +212,7 @@ module.exports = {
 
                 await acceptedUser.roles.add(process.env.MEMBER_ROLE_ID);
 
-                interaction.editReply({
+                await interaction.editReply({
                     content: "Good job! You finally joined a team you pathetic rat!",
                     ephemeral: true
                 });

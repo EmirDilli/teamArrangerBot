@@ -107,6 +107,12 @@ module.exports = {
 
             teamName = newTeamName;
 
+            // changing the name of private channel
+            const teamChannelID = adminUser.teamChannelID;
+            const teamChannel = await client.guilds.cache.get(process.env.GUILD_ID).channels.fetch(teamChannelID);
+
+            await teamChannel.setName(teamName);
+
         }
 
         if(newTeamColor){
