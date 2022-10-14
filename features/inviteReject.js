@@ -50,6 +50,7 @@ module.exports = {
             }
         });
 
+        await interaction.message.delete();
 
         const adminUser = await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(admin.userID);
         
