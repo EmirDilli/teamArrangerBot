@@ -28,15 +28,16 @@ module.exports = {
         let leavingMember = (await readData(mongoClient, { "userID": member.id }));
         leavingMember = leavingMember.length !== 0 ? leavingMember[0] : null;
         const isAdminUser = leavingMember ? leavingMember.isAdmin : null;
-        let admin = (await readData(mongoClient, { "teamName": leavingMember.teamName, "isAdmin": true }))[0];
-        
-        let row;
 
         //  checks if the interacted user is in ay particular team
         if (isAdminUser === null) {
 
             return;
         }
+
+        let admin = (await readData(mongoClient, { "teamName": leavingMember.teamName, "isAdmin": true }))[0];
+        
+        let row;
 
         const allMembers = await readData(mongoClient, { "teamName": leavingMember.teamName });
 
@@ -157,23 +158,25 @@ module.exports = {
 
     async leaveTeam(interaction, mongoClient, client) {
 
+
         let leavingMember = (await readData(mongoClient, { "userID": interaction.user.id }));
         leavingMember = leavingMember.length !== 0 ? leavingMember[0] : null;
-        const isAdminUser = leavingMember ? leavingMember.isAdmin : null;
-        let admin = (await readData(mongoClient, { "teamName": leavingMember.teamName, "isAdmin": true }))[0];
-        
-        let row;
 
+        const isAdminUser = leavingMember ? leavingMember.isAdmin : null;
         //  checks if the interacted user is in ay particular team
         if (isAdminUser === null) {
 
-            await interaction.editReply({
+            await interaction.reply({
                 content: "You're not in any particular team to leave!",
                 ephemeral: true
             });
 
             return;
         }
+
+        let admin = (await readData(mongoClient, { "teamName": leavingMember.teamName, "isAdmin": true }))[0];
+        
+        let row;
 
         const allMembers = await readData(mongoClient, { "teamName": leavingMember.teamName });
 
@@ -183,7 +186,7 @@ module.exports = {
             return;
         }
 
-        interaction.deferReply({
+        await interaction.deferReply({
             ephemeral: true
         });
 

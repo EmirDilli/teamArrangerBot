@@ -56,7 +56,6 @@ module.exports = {
 
             //variable to check if the variable is in the database appliedTeam array
             const teamCustomID = applierDB[0].appliedTeams.find(element => element === receiverDB[0].teamCustomID)
-            console.log(teamCustomID)
             
             //if it is not in the database
             if (!teamCustomID) {
