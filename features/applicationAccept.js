@@ -147,6 +147,16 @@ module.exports = {
             console.log(interaction.message);
             await interaction.message.delete();
 
+            const embedAccept = new EmbedBuilder()
+                .setTitle("You're Accepted To The Team!")
+                .setDescription(`You are now an official member of '${teamName}'!`)
+                .setThumbnail("https://media.istockphoto.com/vectors/agreement-color-line-icon-documentation-status-linear-vector-request-vector-id1271490971?k=20&m=1271490971&s=612x612&w=0&h=AuGYSNj2B9lBBFWZ4CWaI39-VXxYE_b4EMzsbLR8OC4=")
+                .setColor("Random");
+
+            acceptedUser.send({
+                embeds: [embedAccept] 
+            });
+
             //  replying to the interaction
             await interaction.editReply({
                 content: "You've added this team member successfully!",

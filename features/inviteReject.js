@@ -25,10 +25,13 @@ module.exports = {
         const acceptedUserID = interaction.customId.split(".")[2];
 
         if((await readData(mongoClient, {"teamCustomID": teamID})).length === 0){
+            
             await interaction.editReply({
-                content: "The team you want to join does not exist anymore!",
+                content: "The team you want to reject does not exist anymore!",
                 ephemeral: true
-            })
+            });
+            
+            await interaction.message.delete();
             return;
         }
 
@@ -50,6 +53,7 @@ module.exports = {
             }
         });
 
+        await interaction.message.delete();
 
         const adminUser = await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(admin.userID);
         
