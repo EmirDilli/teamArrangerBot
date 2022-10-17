@@ -39,7 +39,7 @@ module.exports = {
         const acceptedUserID = interaction.customId.split(".")[2];
 
         const acceptedUser = await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(acceptedUserID)
-            .catch(err => {
+            .catch(async err => {
 
                 await interaction.editReply({
                     content: "Error occured while processing the invitation accept!",
