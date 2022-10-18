@@ -95,7 +95,8 @@ module.exports = {
                 "teamLogo": teamLogo,
                 "teamEmbedID": teamEmbedID,
                 "appliedTeams": [],
-                "teamCustomID": teamCustomID
+                "teamCustomID": teamCustomID,
+                "inviteUserArr": []
 
             })
                 .then(async () => {
