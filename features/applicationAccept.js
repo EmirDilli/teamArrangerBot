@@ -42,19 +42,49 @@ module.exports = {
             if (acceptedUserDB[0].teamName !== null) {
 
                 await interaction.editReply({
-                    content: "This invited user is already in a team!",
+                    content: "This particular user is already in a team!",
                     ephemeral: true
                 });
+
+                await interaction.message.delete();
 
                 return;
             }
 
         }
 
-        //  checking if the capacity of the team is full
-        const adminUser = (await readData(mongoClient, { "userID": interaction.user.id }))[0];
-        const teamName = adminUser.teamName;
+        let adminUser = (await readData(mongoClient, { "userID": interaction.user.id }));
 
+        //  checking if the adminUser is available
+        if(adminUser.length === 0){
+            await interaction.editReply({
+                content: "You do not seem to be an admin anymore. Therefore, you cannot continue this process!",
+                ephemeral: true
+            });
+
+            await interaction.message.delete();
+
+            return;
+        }
+
+        adminUser = adminUser[0];
+
+        //  checking if the adminUser is still an admin in any particular team
+        if(adminUser.isAdmin === true){
+
+            await interaction.editReply({
+                content: "You do not seem to be an admin anymore. Therefore, you cannot continue this process!",
+                ephemeral: true
+            });
+
+            await interaction.message.delete();
+
+            return;
+        }
+
+        const teamName = adminUser.teamName;
+        
+        //  checking if the capacity of the team is full
         if ((await readData(mongoClient, { "teamName": teamName })).length === 3) {
 
             interaction.editReply({
@@ -95,7 +125,8 @@ module.exports = {
                 "teamLogo": teamLogo,
                 "teamEmbedID": teamEmbedID,
                 "appliedTeams": [],
-                "teamCustomID": teamCustomID
+                "teamCustomID": teamCustomID,
+                "inviteUserArr": []
 
             })
                 .then(async () => {
@@ -127,6 +158,16 @@ module.exports = {
 
             await interaction.message.delete();
 
+            const embedAccept = new EmbedBuilder()
+                .setTitle("You're Accepted To The Team!")
+                .setDescription(`You are now an official member of '${teamName}'!`)
+                .setThumbnail("https://media.istockphoto.com/vectors/agreement-color-line-icon-documentation-status-linear-vector-request-vector-id1271490971?k=20&m=1271490971&s=612x612&w=0&h=AuGYSNj2B9lBBFWZ4CWaI39-VXxYE_b4EMzsbLR8OC4=")
+                .setColor("Random");
+
+            acceptedUser.send({
+                embeds: [embedAccept] 
+            });
+
             await interaction.editReply({
                 content: "You've added this team member successfully!",
                 ephemeral: true
@@ -144,7 +185,6 @@ module.exports = {
 
             await acceptedUser.roles.add(process.env.MEMBER_ROLE_ID);
 
-            console.log(interaction.message);
             await interaction.message.delete();
 
             const embedAccept = new EmbedBuilder()

@@ -39,12 +39,14 @@ module.exports = {
         const acceptedUserID = interaction.customId.split(".")[2];
 
         const acceptedUser = await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(acceptedUserID)
-            .catch(err => {
+            .catch(async err => {
 
-                interaction.editReply({
+                await interaction.editReply({
                     content: "Error occured while processing the invitation accept!",
                     ephemeral: true
                 });
+                
+                await interaction.message.delete();
                 return;
 
             });
@@ -57,6 +59,8 @@ module.exports = {
                 content: "The team you want to join does not exist anymore!",
                 ephemeral: true
             })
+            
+            await interaction.message.delete();
             return;
         }
         //  check if accepted user is already in a team
@@ -78,7 +82,7 @@ module.exports = {
         if (team.length === 3) {
 
             await interaction.editReply({
-                content: "Your team has full capacity to invite another member!",
+                content: "This team unfortunately, has full capacity!",
                 ephemeral: true
             });
 
@@ -94,16 +98,14 @@ module.exports = {
         let teamEmbedID = admin.teamEmbedID;
         let teamCustomID = admin.teamCustomID;
 
-
         admin.inviteUserArr.forEach(async element => {
             if(element === acceptedUserID){
                 let arr = admin.inviteUserArr
                 let index = arr.indexOf(element);
                 arr.splice(index,1)
-                await updateData(mongoClient, {"userID": adminUser.userID}, {"inviteUserArr": arr})
+                await updateData(mongoClient, {"userID": admin.userID}, {"inviteUserArr": arr})
             }
         });
-
         
         //  constructing the database and embed messages
         if ((await readData(mongoClient, { "userID": acceptedUserID })).length !== 0) {
@@ -120,7 +122,8 @@ module.exports = {
                 "teamLogo": teamLogo,
                 "teamEmbedID": teamEmbedID,
                 "appliedTeams": [],
-                "teamCustomID": teamCustomID
+                "teamCustomID": teamCustomID,
+                "inviteUserArr": []
 
             });
 
@@ -138,7 +141,7 @@ module.exports = {
                 await acceptedUser.roles.add(process.env.MEMBER_ROLE_ID);
 
                 await interaction.editReply({
-                    content: "Good job! You finally joined a team you pathetic rat!",
+                    content: "You have succesfully attended to the team!",
                     ephemeral: true
                 });
 
@@ -155,7 +158,7 @@ module.exports = {
                 await acceptedUser.roles.add(process.env.MEMBER_ROLE_ID);
 
                 await interaction.editReply({
-                    content: "Good job! You finally joined a team you pathetic rat!",
+                    content: "You have succesfully attended to the team!",
                     ephemeral: true
                 });
 
@@ -197,7 +200,7 @@ module.exports = {
                 await acceptedUser.roles.add(process.env.MEMBER_ROLE_ID);
 
                 await interaction.editReply({
-                    content: "Good job! You finally joined a team you pathetic rat!",
+                    content: "You have succesfully attended to the team!",
                     ephemeral: true
                 });
 
@@ -213,7 +216,7 @@ module.exports = {
                 await acceptedUser.roles.add(process.env.MEMBER_ROLE_ID);
 
                 await interaction.editReply({
-                    content: "Good job! You finally joined a team you pathetic rat!",
+                    content: "You have succesfully attended to the team!",
                     ephemeral: true
                 });
 

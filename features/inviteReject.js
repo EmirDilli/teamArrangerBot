@@ -36,7 +36,7 @@ module.exports = {
         }
 
         await interaction.editReply({
-            content:"You successfully denied that bitch!",
+            content:"You rejection has been executed succesfully!",
             ephemeral: true
         })
 
@@ -56,9 +56,16 @@ module.exports = {
         await interaction.message.delete();
 
         const adminUser = await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(admin.userID);
+        const rejectedmember = await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(interaction.user.id);
+
+        const embed = new EmbedBuilder()
+            .setTitle("Your Invitation Has Been Rejected!")
+            .setDescription(`${rejectedmember} rejected your team invitation!`)
+            .setThumbnail("https://media.istockphoto.com/vectors/agreement-color-line-icon-documentation-status-linear-vector-request-vector-id1271490971?k=20&m=1271490971&s=612x612&w=0&h=AuGYSNj2B9lBBFWZ4CWaI39-VXxYE_b4EMzsbLR8OC4=")
+            .setColor("Random");
         
         adminUser.send({
-            content: "You get denied bitch!"
+            embeds: [embed]
         })
     }
 
