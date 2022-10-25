@@ -25,9 +25,17 @@ module.exports = {
         const applierID = interaction.user.id;
 
         const applierDB = await readData(mongoClient, { "userID": applierID});
-        const receiverDB =  await readData(mongoClient, {"userID": receiverID})
+        const receiverDB =  await readData(mongoClient, {"userID": receiverID});
        
-       
+        //  checks if the receiver end of the interaction is in database
+       if(receiverDB.length === 0){
+            await interaction.reply({
+                content: "The team you applied does not seem to be available right now. Therefore, your process is dismissed.",
+                ephemeral: true
+            });
+
+            return;
+       }
         
 
             
@@ -96,13 +104,13 @@ module.exports = {
 
         const row = new ActionRowBuilder()
             .addComponents(new ButtonBuilder()
-                .setCustomId(`applyAccept.${interaction.user.id}`)
+                .setCustomId(`applyAccept.${interaction.user.id}.${receiverDB[0].teamCustomID}`)
                 .setLabel("Accept")
                 .setEmoji("✅")
                 .setStyle(ButtonStyle.Primary)
             )
             .addComponents(new ButtonBuilder()
-                .setCustomId(`applyReject.${interaction.user.id}`)
+                .setCustomId(`applyReject.${interaction.user.id}.${receiverDB[0].teamCustomID}`)
                 .setLabel("Reject")
                 .setEmoji("❌")
                 .setStyle(ButtonStyle.Secondary)

@@ -22,17 +22,10 @@ module.exports = {
         });
 
         const appliedUserID = interaction.customId.split(".")[1];
-        let appliedUser = (await readData(mongoClient, {"userID":appliedUserID}))[0];
-        let adminUser = (await readData(mongoClient, {"userID":interaction.user.id}));
+        const teamID = interaction.customId.split(".")[2];
 
-        appliedUser.appliedTeams.forEach(async element => {
-            if(element === adminUser.teamCustomID){
-                let arr = appliedUser.appliedTeams;
-                let index = arr.indexOf(element);
-                arr.splice(index,1);
-                await updateData(mongoClient, {"userID": appliedUser.userID}, {"appliedTeams": arr});
-            }
-        });
+        let appliedUser = (await readData(mongoClient, {"userID":appliedUserID}));
+        let adminUser = (await readData(mongoClient, {"userID":interaction.user.id}));
 
         //  if user is not on the database
         if(appliedUser.length === 0){
@@ -44,6 +37,17 @@ module.exports = {
             return;
 
         }
+
+        appliedUser = appliedUser[0];
+
+        appliedUser.appliedTeams.forEach(async element => {
+            if(element === teamID){
+                let arr = appliedUser.appliedTeams;
+                let index = arr.indexOf(element);
+                arr.splice(index,1);
+                await updateData(mongoClient, {"userID": appliedUser.userID}, {"appliedTeams": arr});
+            }
+        });
 
         //  if user has already a team
         if(appliedUser.teamCustomID !== null){
