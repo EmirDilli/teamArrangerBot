@@ -51,7 +51,17 @@ module.exports = {
 
             });
 
-
+        
+        if(admin){
+            admin.inviteUserArr.forEach(async element => {
+                if(element === acceptedUserID){
+                    let arr = admin.inviteUserArr
+                    let index = arr.indexOf(element);
+                    arr.splice(index,1)
+                    await updateData(mongoClient, {"userID": admin.userID}, {"inviteUserArr": arr})
+                }
+            });
+        }
         //  check if the specific team is present at that moment
         if((await readData(mongoClient, {"teamCustomID": teamID})).length === 0){
 
@@ -63,6 +73,7 @@ module.exports = {
             await interaction.message.delete();
             return;
         }
+
         //  check if accepted user is already in a team
         if ((await readData(mongoClient, { "userID": acceptedUserID })).length !== 0) {
 
@@ -97,15 +108,6 @@ module.exports = {
         let teamLogo = admin.teamLogo;
         let teamEmbedID = admin.teamEmbedID;
         let teamCustomID = admin.teamCustomID;
-
-        admin.inviteUserArr.forEach(async element => {
-            if(element === acceptedUserID){
-                let arr = admin.inviteUserArr
-                let index = arr.indexOf(element);
-                arr.splice(index,1)
-                await updateData(mongoClient, {"userID": admin.userID}, {"inviteUserArr": arr})
-            }
-        });
         
         //  constructing the database and embed messages
         if ((await readData(mongoClient, { "userID": acceptedUserID })).length !== 0) {

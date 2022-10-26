@@ -24,6 +24,23 @@ module.exports = {
         const team = readData(mongoClient, { "teamCustomID": teamID });
         const acceptedUserID = interaction.customId.split(".")[2];
 
+        let admin;
+        await team.then(datas => datas.find(data => {
+            if (data.isAdmin === true) admin = data;
+        }))
+        
+        
+        if(admin){
+            admin.inviteUserArr.forEach(async element => {
+                if(element === acceptedUserID){
+                    let arr = admin.inviteUserArr
+                    let index = arr.indexOf(element);
+                    arr.splice(index,1)
+                    await updateData(mongoClient, {"userID": admin.userID}, {"inviteUserArr": arr})
+                }
+            });   
+        } 
+
         if((await readData(mongoClient, {"teamCustomID": teamID})).length === 0){
             
             await interaction.editReply({
@@ -40,18 +57,6 @@ module.exports = {
             ephemeral: true
         })
 
-        let admin;
-        await team.then(datas => datas.find(data => {
-            if (data.isAdmin === true) admin = data;
-        }))
-        admin.inviteUserArr.forEach(async element => {
-            if(element === acceptedUserID){
-                let arr = admin.inviteUserArr
-                let index = arr.indexOf(element);
-                arr.splice(index,1)
-                await updateData(mongoClient, {"userID": admin.userID}, {"inviteUserArr": arr})
-            }
-        });
 
         await interaction.message.delete();
 
