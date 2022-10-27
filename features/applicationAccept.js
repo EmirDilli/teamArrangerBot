@@ -98,9 +98,9 @@ module.exports = {
         adminUser = adminUser[0];
 
         //  checking if the adminUser is still an admin in any particular team
-        if (adminUser.isAdmin === true) {
+        if (adminUser.isAdmin === false) {
 
-            await interaction.editReply({
+            await interaction.editReply({   
                 content: "You do not seem to be an admin anymore. Therefore, you cannot continue this process!",
                 ephemeral: true
             });

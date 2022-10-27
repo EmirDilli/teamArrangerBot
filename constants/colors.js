@@ -26,6 +26,18 @@ module.exports =
     value: 'Blurple'
 },
 {
+    name: 'Red',
+    value: 'Red'
+},
+{
+    name: 'Blue',
+    value: 'Blue'
+},
+{
+    name: 'Fuchsia',
+    value: 'Fuchsia'
+},
+{
     name: 'Random',
     value: 'Random'
 }]
