@@ -30,7 +30,23 @@ module.exports = {
         });
 
         const invited_user = interaction.options.get("invite_member").user;
-        const adminUser = (await readData(mongoClient, {"userID" : interaction.user.id}))[0];
+
+        
+
+        let adminUser = (await readData(mongoClient, {"userID" : interaction.user.id}));
+
+        if(adminUser.length === 0){
+
+            await interaction.editReply({
+                content: "You are not an admin in any particular team!",
+                ephemeral: true
+            });
+
+            return;
+
+        }
+
+        adminUser = adminUser[0];
         const isAdminUser = adminUser ? adminUser.isAdmin : null;
             
         let isInvited = false;

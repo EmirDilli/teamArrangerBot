@@ -17,6 +17,7 @@ module.exports = {
 
 
     async applyTeamButton(interaction, mongoClient, client) {
+
         // team apply button is pressed
         const receiverID = interaction.customId.split(".")[1];
         const receiverDB =  await readData(mongoClient, {"userID": receiverID})
@@ -59,9 +60,11 @@ module.exports = {
 
             //if it is in the database appliedTeam array
             if (appliedTeam) {
+
                 interaction.reply({
                     content: "You cannot apply more than once!",
-                    ephemeral: true
+                    ephemeral: true,
+                    
                 })
                 return;
             }
@@ -72,6 +75,7 @@ module.exports = {
         
         //  checks if the admin of the applied team is not in the server anymore
         if (!receiver) {
+
             interaction.reply({
                 content: "This user cannot be found from the Algo Teams server! Therefore, your request cannot be made!",
                 ephemeral: true
@@ -100,7 +104,19 @@ module.exports = {
                     )
             )
         
-        await interaction.showModal(modal);
+        await interaction.showModal(modal)
+            .catch(err => {
+
+                const embed = new EmbedBuilder()
+                    .setTitle("Timeout Error on Interaction")
+                    .setDescription("Your button interaction is failed due to timeout. (it may be about internet connection issue)")
+                    .setColor("Random");
+
+                interaction.user.send({
+                    embeds: [embed]
+                });
+
+            });
         
 
     }
