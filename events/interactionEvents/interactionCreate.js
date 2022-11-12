@@ -59,6 +59,9 @@ module.exports = {
                 if (interaction.commandName === "leave_team") {
                     leaveTeam(interaction, mongoClient, client);
                 }
+                if(interaction.commandName === "help"){
+                    
+                }
 
             }
 

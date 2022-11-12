@@ -23,7 +23,7 @@ module.exports = {
 
         try {
             embedMsg.setThumbnail(teamLogo);
-        } catch (error) {
+            } catch (error) {
         }
 
         // adding team members to the embed message
