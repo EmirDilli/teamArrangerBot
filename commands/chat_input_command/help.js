@@ -36,9 +36,20 @@ module.exports = {
                     value: "Team admin can delete the whole team, with only one single command!!"
                 })
                 .setColor("Random");
-
+                
+                const embedUser = new EmbedBuilder()
+                    .setTitle("😎  Other Commands") 
+                    .addFields({
+                        name: "Create Team",
+                        value: "Everyone can easily create a new team according to its own taste! You can customize your Team Name, Team Color, Team Description, Team Logo individually.\n\n⚠️ WARNING: If you want to add logo to your team, you should enter the image link of your logo. You can get that link by right clicking your image you find in your browser, and pressing Copy image address!"
+                    })
+                    .addFields({
+                        name: "Leave Team",
+                        value: "Every team member can leave its own team, with help of this command."
+                    })
+                    .setColor("Random")
         await interaction.editReply({
-            embeds: [embedAdmin]
+            embeds: [embedAdmin,embedUser]
         });
 
           /*   const embedUser = new EmbedBuilder()
