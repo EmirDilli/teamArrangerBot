@@ -25,7 +25,7 @@ module.exports = {
                 })
                 .addFields({
                     name: "Invite member",
-                    value: "Team admin can invite other members in the Algo Teams server to the team by entering the specific user!\n\n⚠️ WARNING: Team admin can add ONLY ONE member to the team, in each call of this command! If you want to invite several members, call that command again to invite the other member!"
+                    value: "Team admin can invite other members in the Algo Teams server to the team by entering the specific user!\n\n⚠️ WARNING: In each call of this command, team admin can add ONLY ONE member to the team! If you want to invite several members, call that command again to invite the other member!"
                 })
                 .addFields({
                     name: "Kick Member",
