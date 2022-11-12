@@ -7,6 +7,7 @@ const { deleteTeam } = require("../../commands/chat_input_command/deleteTeam.js"
 const { kickMember } = require("../../commands/chat_input_command/kickMember.js");
 const { customize_team } = require("../../commands/chat_input_command/customizeTeam.js");
 const { leaveTeam } = require("../../commands/chat_input_command/leaveTeam.js");
+const { help } = require("../../commands/chat_input_command/help.js");
 
 const { applyTeamButton } = require("../../features/teamApplyButton");
 const { applyTeamModal } = require("../../features/teamApplyModal");
@@ -14,6 +15,7 @@ const { invitationAccept } = require("../../features/inviteAccept")
 const { invitationReject } = require("../../features/inviteReject")
 const { applicationAccept } = require("../../features/applicationAccept.js");
 const { applicationReject } = require("../../features/applicationReject.js");
+
 
 const { kickMemberModal } = require("../../features/kickMemberModal")
 
@@ -59,43 +61,43 @@ module.exports = {
                 if (interaction.commandName === "leave_team") {
                     leaveTeam(interaction, mongoClient, client);
                 }
-                if(interaction.commandName === "help"){
-                    
+                if (interaction.commandName === "help") {
+                    help(interaction);
                 }
 
             }
 
             //  button interactions
             if (interaction.isButton()) {
-                
-                if(interaction.customId.startsWith("apply")){
-                    if(interaction.customId.startsWith("applyAccept")){
+
+                if (interaction.customId.startsWith("apply")) {
+                    if (interaction.customId.startsWith("applyAccept")) {
                         await applicationAccept(interaction, mongoClient, client);
                     }
-                    if(interaction.customId.startsWith("applyReject")){
+                    if (interaction.customId.startsWith("applyReject")) {
                         await applicationReject(interaction, mongoClient, client);
                     }
                 }
 
                 if (interaction.customId.startsWith("teamApply")) {
-                    await applyTeamButton(interaction,mongoClient,client);
+                    await applyTeamButton(interaction, mongoClient, client);
 
                 }
-                if(interaction.customId.startsWith("acceptButton")){
+                if (interaction.customId.startsWith("acceptButton")) {
                     await invitationAccept(interaction, mongoClient, client);
                 }
-                if(interaction.customId.startsWith("rejectButton")){
+                if (interaction.customId.startsWith("rejectButton")) {
                     await invitationReject(interaction, mongoClient, client);
                 }
             }
 
             //  checks whether interaction is modal submit
-            if(interaction.isModalSubmit()){
-                if(interaction.customId.startsWith("userInfo")){
-                    applyTeamModal(interaction,mongoClient,client);
+            if (interaction.isModalSubmit()) {
+                if (interaction.customId.startsWith("userInfo")) {
+                    applyTeamModal(interaction, mongoClient, client);
                 }
-                else if(interaction.customId.startsWith("kickReason")){
-                    kickMember(interaction,mongoClient,client);
+                else if (interaction.customId.startsWith("kickReason")) {
+                    kickMember(interaction, mongoClient, client);
                 }
             }
 
