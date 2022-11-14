@@ -59,7 +59,7 @@ module.exports = {
 
         if(isInvited){
             await interaction.editReply({
-                content: "You cannot invite the user more than once!",
+                content: "You cannot invite this user more than once!",
                 ephemeral: true
             })
             return;

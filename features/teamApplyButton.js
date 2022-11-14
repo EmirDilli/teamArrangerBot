@@ -62,10 +62,9 @@ module.exports = {
             if (appliedTeam) {
 
                 interaction.reply({
-                    content: "You cannot apply more than once!",
+                    content: "You cannot apply more than once to the same team! Wait for the respond from admin!",
                     ephemeral: true,
-                    
-                })
+                });
                 return;
             }
 
