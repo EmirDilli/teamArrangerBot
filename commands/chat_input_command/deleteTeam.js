@@ -157,7 +157,7 @@ module.exports = {
             //  finding other team members rather than admin
 
             if(user.userID !== adminUser.userID){
-                const teamMember = client.guilds.cache.get(process.env.GUILD_ID).members.cache.get(user.userID);
+                const teamMember = await client.guilds.cache.get(process.env.GUILD_ID).members.cache.get(user.userID);
                 if(teamMember){
                     await deleteData(mongoClient, {"userID" : user.userID});
                     await teamMember.roles.remove(process.env.MEMBER_ROLE_ID);
