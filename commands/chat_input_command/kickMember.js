@@ -32,7 +32,7 @@ module.exports = {
         });
 
         const kicked_memberId = interaction.customId.split(".")[1]
-        const kicked_member = client.guilds.cache.get(process.env.GUILD_ID).members.cache.get(kicked_memberId);
+        const kicked_member = await client.guilds.cache.get(process.env.GUILD_ID).members.cache.get(kicked_memberId);
         const adminUser = (await readData(mongoClient, {"userID" : interaction.user.id}))[0];
         
 
