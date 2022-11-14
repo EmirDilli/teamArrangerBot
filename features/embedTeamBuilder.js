@@ -34,7 +34,7 @@ module.exports = {
                 adminID = member.userID;
                 embedMsg.addFields({
                     "name": "Admin",
-                    "value": `${await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(member.userID)}`,
+                    "value": `<@${adminID}>`,
                     "inline": true
                 });
 
@@ -43,7 +43,7 @@ module.exports = {
 
                 embedMsg.addFields({
                     "name": "Member",
-                    "value": `${await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(member.userID)}`,
+                    "value": `<@${member.userID}>`,
                     "inline": true
                 });
 
