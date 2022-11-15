@@ -169,6 +169,10 @@ module.exports = {
             await interaction.reply({
                 content: "You're not in any particular team to leave!",
                 ephemeral: true
+            }).catch(async err => {
+                await interaction.user.send({
+                    content: "A minor error has occured as you try to leave the team. Please try again a bit later to leave."
+                });
             });
 
             return;
