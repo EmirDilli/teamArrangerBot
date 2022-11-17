@@ -119,7 +119,7 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setTitle("Team Invitation To You")
-            .setDescription(`${interaction.user} from the Algo Teams invites you to his/her team. If you're interested you can accept this offer!`)
+            .setDescription(`(${interaction.member} ${interaction.member.nickname ? interaction.member.nickname : interaction.user.username}) from the Algo Teams invites you to his/her team. If you're interested you can accept this offer!`)
             .setThumbnail(process.env.INVITE_THUMBNAIL)
             .setColor("Random");
 

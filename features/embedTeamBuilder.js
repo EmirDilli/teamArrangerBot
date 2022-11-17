@@ -32,18 +32,20 @@ module.exports = {
             if(member.isAdmin){
 
                 adminID = member.userID;
+                const adminMember = await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(adminID);
                 embedMsg.addFields({
                     "name": "Admin",
-                    "value": `<@${adminID}>`,
+                    "value": `<@${adminID}>\n( ${adminMember.nickname ? adminMember.nickname : adminMember.user.username} )`,
                     "inline": true
                 });
 
             }
             else{
 
+                const teamMember = await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(member.userID);
                 embedMsg.addFields({
                     "name": "Member",
-                    "value": `<@${member.userID}>`,
+                    "value": `<@${member.userID}>\n( ${teamMember.nickname ? teamMember.nickname : teamMember.user.username} )`,
                     "inline": true
                 });
 
