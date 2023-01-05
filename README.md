@@ -1,3 +1,1 @@
 # teamArrangerBot
-
-deleteTeam command
