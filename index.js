@@ -48,6 +48,8 @@ async function main() {
     try {
         console.log('/ Command activations');
 
+        client
+
         // connects the database to the application
         await databaseConnect().then((client) => {
             mongoClient = client;

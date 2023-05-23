@@ -1,5 +1,5 @@
 const discord = require("discord.js");
-const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = discord;
+const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder , ActivityType} = discord;
 const { readData } = require("../../databaseFeatures/dbReadData")
 const { addData } = require("../../databaseFeatures/dbAddUser")
 const { deleteData } = require("../../databaseFeatures/dbDeleteUser")
@@ -19,6 +19,10 @@ module.exports = {
         client.on("ready", async () => {
 
             console.log(`The ${client.user.username} has logged in`);
+            client.user.setActivity({
+                name: "by Tevfik Emre Sungur & Emir Şahin Dilli",
+                type: ActivityType.Watching
+            });
 
             /* const embed = new EmbedBuilder()
                 .setAuthor({ name: "Team Name" })
